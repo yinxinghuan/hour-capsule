@@ -429,6 +429,42 @@
 
   &--blind { color: @cream-4; }
 }
+// Revealed subject during the sealing wait — kills dead-air anxiety
+// by telling the user WHAT is being sealed before the image arrives.
+.tsp-pressing__subject {
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 20px; line-height: 1.4;
+  color: @cream;
+  padding: 0 28px;
+  margin: 8px 0 14px;
+  max-width: 340px;
+  align-self: center;
+  animation: tsp-subject-in 600ms ease-out both;
+}
+@keyframes tsp-subject-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+// World-event ticker during the checking/picking wait — a quiet peek at
+// what the curator is reading, fades between lines so it doesn't shout.
+.tsp-pressing__ticker {
+  text-align: center;
+  font-family: 'Montserrat', sans-serif; font-weight: 400;
+  font-size: 10.5px; letter-spacing: 0.06em; line-height: 1.5;
+  color: @cream-4; text-transform: none;
+  padding: 0 36px;
+  margin: 6px 0 12px;
+  max-width: 360px;
+  align-self: center;
+  animation: tsp-ticker-fade 2200ms ease-in-out both;
+}
+@keyframes tsp-ticker-fade {
+   0%  { opacity: 0; }
+  15%  { opacity: 0.62; }
+  85%  { opacity: 0.62; }
+ 100%  { opacity: 0; }
+}
 .tsp-pressing__foot {
   display: flex; align-items: center; justify-content: center;
   gap: 14px;

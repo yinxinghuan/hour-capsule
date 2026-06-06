@@ -95,7 +95,9 @@ export default function HourCapsule() {
 
   // Phase machine — no input screen, collect is a single tap.
   const [phase, setPhase] = useState<Phase>('field');
-  const [sealingStage, setSealingStage] = useState<'picking' | 'sealing'>('picking');
+  const [sealingStage, setSealingStage] = useState<'checking' | 'picking' | 'sealing'>('checking');
+  const [sealingEvents, setSealingEvents] = useState<string[]>([]);
+  const [sealingSubject, setSealingSubject] = useState<string>('');
   const [activeCapsule, setActiveCapsule] = useState<Capsule | null>(null);
   const [error, setError] = useState<string>('');
   const [showCooldownModal, setShowCooldownModal] = useState(false);
@@ -129,12 +131,19 @@ export default function HourCapsule() {
     }
 
     setError('');
-    setSealingStage('picking');
+    setSealingEvents([]);
+    setSealingSubject('');
+    setSealingStage('checking');
     setPhase('sealing');
 
     try {
-      // 1. Pick subject via LLM, with avoid-lists from this hour's field
+      // 1. Pull live world events (best-effort — returns [] on any failure).
+      const worldEvents = await fetchWorldEvents();
+      setSealingEvents(worldEvents);
+
+      // 2. Pick subject via LLM, with avoid-lists from this hour's field
       //    and this user's recent history. Diversity is the first priority.
+      setSealingStage('picking');
       const oneHourAgo = Date.now() - 60 * 60 * 1000;
       const recentGlobal = fieldEntries
         .filter(e => (e.capsule.ts ?? 0) > oneHourAgo)
@@ -142,18 +151,15 @@ export default function HourCapsule() {
         .filter(Boolean);
       const recentSelf = mirror.capsules.slice(0, 12).map(c => c.subject).filter(Boolean);
 
-      // Best-effort: pull live world events. fetchWorldEvents() returns
-      // [] silently on any failure so the picker still works offline.
-      const worldEvents = await fetchWorldEvents();
-
       const subject = await pickSubject({
         worldNudge: worldNudge(),
         worldEvents,
         recentSelf,
         recentGlobal,
       });
+      setSealingSubject(subject);
 
-      // 2. Gen the bag image. Real timestamp + real owner stamp baked in.
+      // 3. Gen the bag image. Real timestamp + real owner stamp baked in.
       setSealingStage('sealing');
       const ts = Date.now();
       const serial = (mirror.collectsTotal ?? 0) + 1;
@@ -278,7 +284,11 @@ export default function HourCapsule() {
         {phase === 'sealing' && (
           <>
             {error && <div className="tsp-toast">{error}</div>}
-            <Pressing stage={sealingStage} />
+            <Pressing
+              stage={sealingStage}
+              events={sealingEvents}
+              subject={sealingSubject}
+            />
           </>
         )}
         {phase === 'reveal' && activeCapsule && (

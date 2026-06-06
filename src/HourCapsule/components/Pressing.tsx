@@ -1,11 +1,54 @@
 // Vacuum-seal placeholder while LLM picks subject + gen-image runs.
-// The α emblem breathes at the centre. Subject stays HIDDEN until reveal
-// so the bag opening is a surprise.
+// Progressive disclosure to soften the wait:
+//   · 'checking' → a couple of world-event fragments tick past, hinting
+//     at the curator's reading material
+//   · 'picking'  → the same fragments stay visible, "the curator is
+//     choosing..." copy
+//   · 'sealing'  → the chosen subject is revealed in italics, so the
+//     user has 10-20s of anticipation about what's coming out of the bag
+import { useEffect, useState } from 'react';
+
 interface Props {
-  stage: 'picking' | 'sealing';
+  stage: 'checking' | 'picking' | 'sealing';
+  /** A few world-event lines being read by the curator (best-effort).
+   *  Shown as a quiet ticker during 'checking' + 'picking'. */
+  events?: string[];
+  /** Filled once pickSubject() returns. Shown during 'sealing' so the
+   *  user knows WHAT is being sealed before the image arrives. */
+  subject?: string;
 }
 
-export default function Pressing({ stage }: Props) {
+const TICKER_INTERVAL_MS = 2200;
+
+export default function Pressing({ stage, events = [], subject }: Props) {
+  // Rotate the world-event ticker during checking/picking.
+  const [tickerIdx, setTickerIdx] = useState(0);
+  useEffect(() => {
+    if (stage === 'sealing' || events.length === 0) return;
+    const t = setInterval(
+      () => setTickerIdx(i => (i + 1) % events.length),
+      TICKER_INTERVAL_MS,
+    );
+    return () => clearInterval(t);
+  }, [stage, events.length]);
+
+  const tickerLine = events.length > 0 ? events[tickerIdx % events.length] : '';
+
+  let headline: string;
+  let footLabel: string;
+  if (stage === 'checking') {
+    headline = '— reading the world —';
+    footLabel = 'checking';
+  } else if (stage === 'picking') {
+    headline = '— the curator is choosing —';
+    footLabel = 'picking';
+  } else {
+    headline = subject
+      ? '— sealing —'
+      : '— vacuum-sealing your capsule —';
+    footLabel = 'sealing';
+  }
+
   return (
     <div className="tsp-pressing">
       <div className="tsp-pressing__centre">
@@ -20,13 +63,23 @@ export default function Pressing({ stage }: Props) {
       </div>
 
       <div className="tsp-pressing__inscription tsp-pressing__inscription--blind">
-        {stage === 'picking'
-          ? '— the curator is choosing this hour\'s object —'
-          : '— vacuum-sealing your capsule —'}
+        {headline}
       </div>
 
+      {/* During sealing, the chosen subject is shown so the user knows
+          what's coming — kills dead-air anxiety while the image renders. */}
+      {stage === 'sealing' && subject && (
+        <div className="tsp-pressing__subject">{subject}</div>
+      )}
+
+      {/* During checking/picking, a tiny ticker peeks at what the curator
+          is reading — without exposing every headline at once. */}
+      {stage !== 'sealing' && tickerLine && (
+        <div className="tsp-pressing__ticker">{tickerLine}</div>
+      )}
+
       <div className="tsp-pressing__foot">
-        <em>{stage === 'picking' ? 'picking' : 'sealing'} your capsule</em>
+        <em>{footLabel} your capsule</em>
         <div className="tsp-loader"><span /><span /><span /></div>
         <div className="tsp-pressing__est">~ 30s</div>
       </div>
