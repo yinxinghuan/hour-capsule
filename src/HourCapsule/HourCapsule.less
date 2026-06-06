@@ -802,7 +802,9 @@
 
 .tsp-detail {
   position: fixed; inset: 0;
-  background: rgba(5, 1, 4, 0.94);
+  background: @ground;            // fully opaque — no Field bleed-through
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   z-index: 110;
   display: flex; align-items: center; justify-content: center;
   padding: 16px 14px;
@@ -884,8 +886,10 @@
   -webkit-tap-highlight-color: transparent; touch-action: manipulation;
   transition: border-color 200ms ease, background 200ms ease;
   &.is-liked {
+    // Solid darker fill so the pill reads as opaque even on busy backdrops.
+    // Pink hue comes from border + text + glyph, not bg alpha.
     border-color: @pink-q;
-    background: rgba(245, 177, 199, 0.18);
+    background: rgba(60, 14, 28, 0.92);
     box-shadow: 0 0 18px rgba(245, 177, 199, 0.18);
   }
   &.is-bursting .tsp-detail__like-glyph {
