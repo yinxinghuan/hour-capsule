@@ -1,9 +1,10 @@
 // Read-only detail overlay for a collected capsule. Opened by tapping
 // a card in the Field (with author chip) or a cell in the shelf (own).
 // No actions besides Like and (own-only) Discard. Close via X or backdrop.
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { relativeAgo, formatStamp, formatSerial } from '../utils/day';
 import { openAigramProfile, isInAigram } from '@shared/runtime/bridge';
+import { playLike, playUnlike, hapticTap } from '../utils/sound';
 import type { Capsule } from '../types';
 
 export interface DetailAuthor {
@@ -31,6 +32,18 @@ export default function SealDetail({ capsule, author, like, onToggleLike, onClos
   const handleAuthorTap = () => {
     if (!author || author.isSelf || !isInAigram || !author.userId) return;
     openAigramProfile(author.userId);
+  };
+
+  const [bursting, setBursting] = useState(false);
+  const burstTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (burstTimer.current) clearTimeout(burstTimer.current); }, []);
+  const handleLikeTap = () => {
+    if (like.liked) playUnlike(); else playLike();
+    hapticTap();
+    setBursting(true);
+    if (burstTimer.current) clearTimeout(burstTimer.current);
+    burstTimer.current = setTimeout(() => setBursting(false), 520);
+    onToggleLike();
   };
 
   return (
@@ -71,8 +84,8 @@ export default function SealDetail({ capsule, author, like, onToggleLike, onClos
         </div>
 
         <button
-          className={`tsp-detail__like${like.liked ? ' is-liked' : ''}`}
-          onClick={onToggleLike}
+          className={`tsp-detail__like${like.liked ? ' is-liked' : ''}${bursting ? ' is-bursting' : ''}`}
+          onClick={handleLikeTap}
         >
           <span className="tsp-detail__like-glyph">{like.liked ? '♥' : '♡'}</span>
           <span className="tsp-detail__like-count">
