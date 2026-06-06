@@ -1,0 +1,863 @@
+// The Seal Press — `.tsp-` prefix. Editorial flat-ground design.
+// No gradients on backgrounds. Rhythm from type + hairlines.
+
+@ground:    #0A0508;
+@line:      rgba(244, 232, 208, 0.16);
+@line-d:    rgba(244, 232, 208, 0.07);
+@pink:      #F5B1C7;
+@pink-q:    rgba(245, 177, 199, 0.5);
+@terra:     #B85A3A;
+@cream:     #F4E8D0;
+@cream-2:   rgba(244, 232, 208, 0.62);
+@cream-3:   rgba(244, 232, 208, 0.38);
+@cream-4:   rgba(244, 232, 208, 0.2);
+
+.tsp-root {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: @ground;
+  color: @cream;
+  font-family: 'Cormorant Garamond', -apple-system, serif;
+}
+
+.tsp-boot {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  color: @cream-3; font-size: 18px;
+}
+
+// ─── Brand strip ──────────────────────────────────────────────────
+
+.tsp-topbar {
+  position: absolute; top: 0; left: 0; right: 0;
+  z-index: 4;
+  padding: 22px 22px 0;
+  display: flex; align-items: center; justify-content: space-between;
+
+  &__l, &__r {
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 8.5px; letter-spacing: 0.4em;
+    color: @cream-3; text-transform: uppercase;
+  }
+  &__l { display: flex; align-items: center; }
+  &__dot {
+    display: inline-block; width: 4px; height: 4px;
+    background: @pink; border-radius: 50%;
+    margin-right: 8px;
+  }
+}
+.tsp-toprule {
+  position: absolute; top: 52px; left: 22px; right: 22px;
+  height: 0; border-top: 0.5px solid @line;
+  z-index: 4;
+}
+
+// ─── Page region ──────────────────────────────────────────────────
+
+.tsp-page {
+  position: absolute; top: 70px; bottom: 0; left: 0; right: 0;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+// ─── Field ────────────────────────────────────────────────────────
+
+.tsp-field {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 12px 22px 120px;
+}
+.tsp-field--empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px 30px 120px;
+  text-align: center;
+
+  h3 {
+    margin: 0 0 12px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-weight: 400; font-size: 28px;
+    color: @cream;
+  }
+  p {
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 15px; color: @cream-3;
+    max-width: 280px;
+  }
+  em {
+    font-style: italic; font-size: 16px; color: @cream-3;
+  }
+}
+
+.tsp-field__hd {
+  padding-top: 6px;
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 4px;
+}
+.tsp-field__title {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-weight: 400; font-size: 30px; color: @cream;
+  line-height: 1;
+}
+.tsp-field__count {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 9px; letter-spacing: 0.4em;
+  color: @pink; text-transform: uppercase;
+}
+.tsp-field__sub {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 13px; color: @cream-3;
+  margin-bottom: 14px;
+}
+.tsp-field__rule {
+  height: 0; border-top: 0.5px solid @line-d;
+  margin-bottom: 18px;
+}
+.tsp-field__feed {
+  display: flex; flex-direction: column;
+  gap: 38px;
+}
+
+// ─── Seal card ────────────────────────────────────────────────────
+
+.tsp-seal {
+  display: flex; flex-direction: column;
+}
+.tsp-seal__author {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px;
+}
+.tsp-seal__author-btn {
+  background: transparent; border: none; padding: 0;
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; color: inherit;
+  min-width: 0;
+}
+.tsp-seal__author-btn:disabled { cursor: default; }
+.tsp-seal__avatar {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #5C2828;
+  color: @cream;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 12px;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex: 0 0 22px;
+  object-fit: cover;
+  overflow: hidden;
+}
+.tsp-seal__avatar--self { background: @pink; color: #2A0612; font-weight: 600; }
+.tsp-seal__name {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 9.5px; letter-spacing: 0.36em;
+  color: @cream-2; text-transform: uppercase;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  min-width: 0;
+}
+.tsp-seal__name--self { color: @pink; }
+.tsp-seal__ago {
+  margin-left: auto;
+  font-family: 'Montserrat', sans-serif; font-weight: 500;
+  font-size: 8px; letter-spacing: 0.32em;
+  color: @cream-4; text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.tsp-seal__blind {
+  color: @pink; opacity: 0.7;
+  font-size: 10px; letter-spacing: 0;
+}
+.tsp-seal__img {
+  width: 100%; aspect-ratio: 1 / 1;
+  overflow: hidden;
+  box-shadow: 0 20px 32px rgba(0, 0, 0, 0.6);
+  margin-bottom: 14px;
+  background: #160a0d;
+
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+}
+.tsp-seal__inscription {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 17px; line-height: 1.4; color: @cream;
+  margin-bottom: 12px;
+}
+.tsp-seal__actions {
+  display: flex; align-items: center; gap: 18px;
+}
+.tsp-seal__act {
+  font-family: 'Montserrat', sans-serif; font-weight: 600;
+  font-size: 9px; letter-spacing: 0.36em;
+  color: @cream-3; text-transform: uppercase;
+  background: transparent; border: none; padding: 4px 0;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+
+  .glyph {
+    color: @cream-3;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 16px;
+  }
+  &.is-liked { color: @pink; }
+  &.is-liked .glyph { color: @pink; }
+  &:disabled { opacity: 0.55; cursor: default; }
+}
+.tsp-seal__iconbadge {
+  font-family: 'Montserrat', sans-serif; font-weight: 500;
+  font-size: 8px; letter-spacing: 0.32em;
+  color: @cream-4; text-transform: uppercase;
+  margin-left: auto;
+}
+
+// ─── Press input ──────────────────────────────────────────────────
+
+.tsp-press {
+  flex: 1 1 auto; overflow-y: auto;
+  padding: 14px 26px 24px;
+  display: flex; flex-direction: column;
+}
+.tsp-press__step {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 9px; letter-spacing: 0.42em;
+  color: @pink; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.tsp-press__title {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-weight: 400; font-size: 36px; color: @cream;
+  line-height: 1; margin: 0 0 8px;
+}
+.tsp-press__sub {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 15px; color: @cream-3;
+  margin-bottom: 24px;
+}
+.tsp-press__input {
+  margin-bottom: 22px;
+  input {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 21px; line-height: 1.4;
+    color: @cream; background: transparent;
+    border: none; border-bottom: 0.5px solid @line;
+    padding: 6px 0 12px; outline: none; width: 100%;
+    caret-color: @pink;
+
+    -webkit-user-select: text; user-select: text;
+    -webkit-touch-callout: default;
+    touch-action: auto;
+
+    &::placeholder { color: @cream-4; font-style: italic; }
+  }
+}
+.tsp-press__meta {
+  margin-top: 12px;
+  display: flex; align-items: baseline; justify-content: space-between;
+}
+.tsp-press__counter {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 13px; letter-spacing: 0.04em;
+  color: @cream;
+  span {
+    font-family: 'Montserrat', sans-serif; font-weight: 500;
+    font-size: 8px; letter-spacing: 0.4em;
+    color: @cream-3; text-transform: uppercase;
+    margin-left: 4px;
+  }
+  &.is-low { color: @pink; }
+}
+.tsp-press__hint {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 12px; color: @cream-4;
+}
+
+.tsp-press__primary {
+  display: flex; justify-content: center;
+  margin-bottom: 22px;
+}
+.tsp-cta {
+  font-family: 'Montserrat', sans-serif; font-weight: 800;
+  font-size: 13px; letter-spacing: 0.42em;
+  text-transform: uppercase;
+  border: none; cursor: pointer;
+  padding: 16px 44px; border-radius: 9999px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  display: inline-flex; align-items: center; gap: 12px;
+}
+.tsp-cta:disabled { opacity: 0.4; cursor: default; }
+.tsp-cta--primary {
+  background: linear-gradient(180deg, #F5B1C7 0%, #C97AA3 100%);
+  color: #2A0612;
+  box-shadow:
+    0 14px 30px rgba(245, 177, 199, 0.42),
+    0 0 50px rgba(245, 177, 199, 0.18),
+    inset 0 1px 0 rgba(255, 220, 230, 0.7),
+    inset 0 -1px 0 rgba(140, 60, 90, 0.4);
+
+  .arrow {
+    display: inline-block; width: 28px; height: 0;
+    border-top: 1.4px solid #2A0612; position: relative;
+  }
+  .arrow::after {
+    content: ''; position: absolute; right: -1px; top: -3px;
+    width: 6px; height: 6px;
+    border-right: 1.4px solid #2A0612; border-top: 1.4px solid #2A0612;
+    transform: rotate(45deg);
+  }
+}
+
+.tsp-press__or {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 14px;
+  .rule { flex: 1; height: 0; border-top: 0.5px solid @line; }
+  .or {
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 8.5px; letter-spacing: 0.42em;
+    color: @cream-4; text-transform: uppercase;
+  }
+}
+.tsp-press__blind {
+  display: block; width: 100%;
+  padding: 16px 16px;
+  background: transparent; border: 0.6px solid @line;
+  cursor: pointer; text-align: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.tsp-press__blind-title {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 17px; color: @cream; margin-bottom: 4px;
+}
+.tsp-press__blind-sub {
+  font-family: 'Montserrat', sans-serif; font-weight: 500;
+  font-size: 8.5px; letter-spacing: 0.4em;
+  color: @cream-3; text-transform: uppercase;
+}
+.tsp-press__cancel {
+  margin-top: 18px;
+  text-align: center;
+  button {
+    background: transparent; border: none; padding: 8px 14px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 9.5px; letter-spacing: 0.42em;
+    color: @cream-3; text-transform: uppercase;
+    .arr { color: @pink; margin-right: 6px; }
+  }
+}
+
+// ─── Pressing (kiln fire) ─────────────────────────────────────────
+
+.tsp-pressing {
+  flex: 1 1 auto;
+  padding: 22px 26px 30px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.tsp-pressing__centre {
+  flex: 1 1 auto;
+  display: flex; align-items: center; justify-content: center;
+}
+.tsp-kiln {
+  width: 240px; height: 240px;
+  position: relative;
+  border-radius: 58% 64% 52% 68% / 56% 50% 62% 54%;
+  background:
+    radial-gradient(ellipse at 50% 55%, #A85530 0%, #5E2410 45%, #1F0805 85%);
+  box-shadow:
+    0 0 80px rgba(180, 80, 40, 0.28),
+    0 0 30px rgba(220, 110, 60, 0.18),
+    inset 0 0 60px rgba(0, 0, 0, 0.5),
+    inset 0 0 22px rgba(240, 140, 70, 0.15);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  animation: tsp-kiln-pulse 3.6s ease-in-out infinite;
+
+  &::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='b'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='3'/><feColorMatrix values='0 0 0 0 0.4  0 0 0 0 0.18  0 0 0 0 0.1  0 0 0 0.6 0'/></filter><rect width='200' height='200' filter='url(%23b)'/></svg>");
+    mix-blend-mode: overlay; opacity: 0.7;
+    pointer-events: none;
+  }
+}
+.tsp-kiln__mark {
+  position: relative; z-index: 1;
+  width: 100px; height: 100px;
+  display: flex; align-items: center; justify-content: center;
+  animation: tsp-kiln-mark 2.4s ease-in-out infinite;
+
+  svg { width: 100%; height: 100%; }
+  svg path {
+    fill: rgba(255, 226, 201, 0.92);
+    filter: drop-shadow(0 0 8px rgba(255, 200, 140, 0.5));
+  }
+}
+@keyframes tsp-kiln-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 80px rgba(180, 80, 40, 0.28),
+      0 0 30px rgba(220, 110, 60, 0.18),
+      inset 0 0 60px rgba(0, 0, 0, 0.5),
+      inset 0 0 22px rgba(240, 140, 70, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 120px rgba(220, 110, 60, 0.4),
+      0 0 45px rgba(240, 140, 70, 0.3),
+      inset 0 0 60px rgba(0, 0, 0, 0.45),
+      inset 0 0 34px rgba(250, 160, 90, 0.28);
+  }
+}
+@keyframes tsp-kiln-mark {
+  0%, 100% { opacity: 0.45; transform: scale(0.92); }
+  50%      { opacity: 1;    transform: scale(1.08); }
+}
+.tsp-pressing__inscription {
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 14px; line-height: 1.4;
+  color: @cream-3;
+  padding: 0 24px;
+  margin: 22px 0 6px;
+  max-width: 320px;
+  align-self: center;
+
+  &--blind { color: @cream-4; }
+}
+.tsp-pressing__foot {
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 17px; color: @cream-2;
+}
+.tsp-pressing__est {
+  font-family: 'Montserrat', sans-serif; font-weight: 500;
+  font-size: 8.5px; letter-spacing: 0.4em;
+  color: @cream-4; text-transform: uppercase;
+}
+.tsp-loader {
+  display: inline-flex; gap: 5px;
+  span {
+    width: 5px; height: 5px;
+    background: @pink; border-radius: 50%;
+    animation: tsp-dot 1.4s ease-in-out infinite;
+    &:nth-child(2) { animation-delay: 0.18s; }
+    &:nth-child(3) { animation-delay: 0.36s; }
+  }
+}
+@keyframes tsp-dot {
+  0%, 80%, 100% { opacity: 0.25; transform: scale(0.8); }
+  40%           { opacity: 1;    transform: scale(1.15); }
+}
+
+// ─── Reveal + Cast ────────────────────────────────────────────────
+
+.tsp-reveal {
+  flex: 1 1 auto; overflow-y: auto;
+  padding: 14px 24px 24px;
+  display: flex; flex-direction: column;
+}
+.tsp-reveal__eyebrow {
+  text-align: center;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 9px; letter-spacing: 0.5em;
+  color: @pink; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.tsp-reveal__cardwrap {
+  display: flex; justify-content: center;
+  margin-bottom: 18px;
+}
+.tsp-reveal__card {
+  width: 240px; height: 240px;
+  overflow: hidden;
+  box-shadow:
+    0 28px 50px rgba(0, 0, 0, 0.7),
+    0 0 30px rgba(0, 0, 0, 0.55);
+  animation: tsp-reveal-in 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+}
+@keyframes tsp-reveal-in {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0)    scale(1); }
+}
+.tsp-reveal__inscription {
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 18px; line-height: 1.4;
+  color: @cream; padding: 0 4px;
+  margin-bottom: 10px;
+}
+.tsp-reveal__meta {
+  text-align: center;
+  margin-bottom: 22px;
+}
+.tsp-reveal__metatag {
+  font-family: 'Montserrat', sans-serif; font-weight: 600;
+  font-size: 8.5px; letter-spacing: 0.4em;
+  color: @cream-3; text-transform: uppercase;
+}
+.tsp-reveal__cast-title {
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 15px; color: @cream-3;
+  margin-bottom: 12px;
+}
+.tsp-reveal__cast {
+  display: flex; gap: 10px;
+}
+.tsp-cast {
+  flex: 1;
+  background: transparent; border: 0.6px solid @line;
+  cursor: pointer; padding: 14px 6px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.tsp-cast--primary {
+  border-color: @pink;
+  background: rgba(245, 177, 199, 0.06);
+}
+.tsp-cast__glyph {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 22px; color: @cream-3; line-height: 1;
+}
+.tsp-cast--primary .tsp-cast__glyph { color: @pink; }
+.tsp-cast__main {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 17px; color: @cream;
+}
+.tsp-cast__sub {
+  font-family: 'Montserrat', sans-serif; font-weight: 500;
+  font-size: 7.5px; letter-spacing: 0.32em;
+  color: @cream-3; text-transform: uppercase;
+}
+
+// ─── Altar ────────────────────────────────────────────────────────
+
+.tsp-altar {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 14px 22px 110px;
+}
+.tsp-altar--empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px 30px 110px;
+  text-align: center;
+
+  h3 {
+    margin: 0 0 12px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-weight: 400; font-size: 28px;
+    color: @cream;
+  }
+  p {
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 15px; color: @cream-3;
+    max-width: 280px;
+  }
+}
+.tsp-altar__hd {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.tsp-altar__title {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-weight: 400; font-size: 30px; color: @cream;
+  line-height: 1;
+}
+.tsp-altar__count {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 9px; letter-spacing: 0.4em;
+  color: @pink; text-transform: uppercase;
+}
+.tsp-altar__rule {
+  height: 0; border-top: 0.5px solid @line-d;
+  margin-bottom: 18px;
+}
+.tsp-altar__grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 22px 12px;
+}
+.tsp-altar__cell {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.tsp-altar__face {
+  width: 100%; aspect-ratio: 1 / 1;
+  overflow: hidden;
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.55);
+
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+}
+.tsp-altar__inscription {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 13px; line-height: 1.3; color: @cream;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.tsp-altar__date {
+  font-family: 'Montserrat', sans-serif; font-weight: 500;
+  font-size: 7.5px; letter-spacing: 0.32em;
+  color: @cream-3; text-transform: uppercase;
+}
+.tsp-altar__blind { color: @pink; }
+
+// ─── Bottom tab bar ───────────────────────────────────────────────
+
+.tsp-tabbar {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  z-index: 6;
+  padding: 14px 26px 22px;
+  background: linear-gradient(180deg, rgba(10, 5, 8, 0) 0%, rgba(10, 5, 8, 0.95) 30%, @ground 60%);
+  display: flex; align-items: center; justify-content: space-between;
+
+  &__btn {
+    background: none; border: none; padding: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    display: inline-flex; flex-direction: column; align-items: center;
+    gap: 3px;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 8.5px; letter-spacing: 0.4em;
+    color: @cream-3; text-transform: uppercase;
+
+    .glyph {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 17px; line-height: 1;
+    }
+    &.is-active { color: @cream; }
+    &.is-active .glyph { color: @pink; }
+  }
+}
+.tsp-tabbar__press {
+  padding: 13px 26px; border-radius: 9999px;
+  background: linear-gradient(180deg, #F5B1C7 0%, #C97AA3 100%);
+  color: #2A0612;
+  display: inline-flex; align-items: center; gap: 10px;
+  flex-direction: row;
+  font-family: 'Montserrat', sans-serif; font-weight: 800;
+  font-size: 11px; letter-spacing: 0.42em;
+  box-shadow:
+    0 14px 30px rgba(245, 177, 199, 0.42),
+    0 0 50px rgba(245, 177, 199, 0.18),
+    inset 0 1px 0 rgba(255, 220, 230, 0.7),
+    inset 0 -1px 0 rgba(140, 60, 90, 0.4);
+
+  .label { color: #2A0612; }
+  .quota {
+    font-family: 'Montserrat', sans-serif; font-weight: 800;
+    font-size: 9px; letter-spacing: 0.32em;
+    background: rgba(42, 6, 18, 0.2);
+    padding: 3px 8px; border-radius: 9999px;
+    color: #2A0612;
+  }
+  &.is-exhausted {
+    background: rgba(58, 25, 40, 0.55);
+    color: @cream-3;
+    box-shadow: inset 0 0 0 0.5px @line;
+    .label, .quota { color: @cream-3; }
+    .quota { background: rgba(244, 232, 208, 0.06); }
+  }
+}
+
+// ─── Modal (quota exhausted) ──────────────────────────────────────
+
+.tsp-modal {
+  position: fixed; inset: 0;
+  background: rgba(7, 2, 6, 0.78);
+  z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 28px;
+  animation: tsp-modal-in 220ms ease-out;
+}
+@keyframes tsp-modal-in {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+.tsp-modal__card {
+  background: #1a0e14;
+  border: 0.5px solid @line;
+  padding: 28px 26px 24px;
+  max-width: 320px;
+  width: 100%;
+  text-align: center;
+}
+.tsp-modal__eyebrow {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 9px; letter-spacing: 0.5em;
+  color: @pink; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.tsp-modal__title {
+  margin: 0 0 14px;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-weight: 400; font-size: 26px; color: @cream;
+  line-height: 1.05;
+}
+.tsp-modal__body {
+  margin: 0 0 22px;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 14.5px; line-height: 1.5; color: @cream-2;
+  strong { color: @pink; font-weight: 600; font-style: normal;
+           font-family: 'Montserrat', sans-serif; letter-spacing: 0.04em; }
+}
+.tsp-modal__cta {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 11px; letter-spacing: 0.42em;
+  text-transform: uppercase;
+  background: transparent;
+  color: @pink;
+  border: 0.6px solid @pink;
+  padding: 12px 30px; border-radius: 9999px;
+  cursor: pointer;
+}
+
+// ─── Seal detail overlay (tap a Field/Altar seal) ─────────────────
+
+.tsp-detail {
+  position: fixed; inset: 0;
+  background: rgba(5, 1, 4, 0.94);
+  z-index: 110;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px 14px;
+  overflow-y: auto;
+  animation: tsp-modal-in 200ms ease-out;
+}
+.tsp-detail__card {
+  position: relative;
+  width: 100%; max-width: 460px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.tsp-detail__close {
+  position: absolute; top: -10px; right: -4px;
+  width: 34px; height: 34px;
+  background: transparent; border: none;
+  color: @cream-2; font-size: 17px; line-height: 1;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  z-index: 2;
+}
+.tsp-detail__img {
+  width: 100%; aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+}
+.tsp-detail__inscription {
+  margin-top: 20px;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 19px; line-height: 1.4; color: @cream;
+  text-align: center;
+}
+.tsp-detail__metatag {
+  margin-top: 14px;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 8.5px; letter-spacing: 0.34em;
+  color: @cream-3; text-transform: uppercase;
+  text-align: center;
+}
+.tsp-detail__foot {
+  margin-top: 20px;
+  width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 14px; border-top: 0.5px solid @line-d;
+}
+.tsp-detail__author {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: none; border: none; padding: 0; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.tsp-detail__avatar {
+  width: 22px; height: 22px; border-radius: 50%;
+  object-fit: cover; background: @cream-4;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 10px; color: #2A0612;
+}
+.tsp-detail__name {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 9px; letter-spacing: 0.18em;
+  color: @cream-2; text-transform: uppercase;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 180px;
+}
+.tsp-detail__name--self { color: @pink; }
+.tsp-detail__ago {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 8.5px; letter-spacing: 0.22em;
+  color: @cream-4; text-transform: uppercase;
+  flex-shrink: 0;
+}
+.tsp-detail__blind { color: @pink; opacity: 0.7; }
+.tsp-detail__like {
+  margin-top: 16px; width: 100%;
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  background: rgba(245, 177, 199, 0.06);
+  border: 0.6px solid @line; border-radius: 9999px;
+  padding: 12px 0; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: border-color 160ms ease, background 160ms ease;
+  &.is-liked { border-color: @pink; background: rgba(245, 177, 199, 0.12); }
+}
+.tsp-detail__like-glyph {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px; line-height: 1; color: @cream-3;
+}
+.tsp-detail__like.is-liked .tsp-detail__like-glyph { color: @pink; }
+.tsp-detail__like-count {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 9px; letter-spacing: 0.3em;
+  color: @cream-2; text-transform: uppercase;
+}
+.tsp-detail__discard {
+  margin-top: 18px; width: 100%;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 9px; letter-spacing: 0.34em;
+  text-transform: uppercase;
+  background: transparent; color: @cream-3;
+  border: 0.6px solid @line; border-radius: 9999px;
+  padding: 11px 0; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 160ms ease, border-color 160ms ease;
+  &.is-confirming {
+    color: #E8607F; border-color: #E8607F;
+  }
+}
+
+// ─── Toast (gen error) ────────────────────────────────────────────
+
+.tsp-toast {
+  position: absolute; top: 80px; left: 22px; right: 22px;
+  z-index: 50;
+  padding: 14px 18px;
+  background: rgba(60, 20, 30, 0.85);
+  border: 0.5px solid @pink-q;
+  color: @cream;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 14px; text-align: center;
+  animation: tsp-modal-in 240ms ease-out;
+}
+
+// ─── Watermark ────────────────────────────────────────────────────
+
+.tsp-watermark {
+  position: absolute;
+  left: 24px; bottom: 90px;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.4;
+
+  img { display: block; height: 14px; width: auto; }
+}

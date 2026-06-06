@@ -1,0 +1,9 @@
+node_modules
+dist
+.DS_Store
+*.log
+.vite
+_qa_*.png
+_ref_square.png
+gen_poster.py
+public/poster_seal.webp
