@@ -25,6 +25,10 @@ export interface CapsuleSave {
   lastCollectAt?: number;
   /** Monotonic counter — next serial = collectsTotal + 1. */
   collectsTotal: number;
+  /** Last few DOMAIN anchors used to seed the LLM picker. Excluded from
+   *  the next random draw so consecutive pulls span different "kingdoms"
+   *  (material / scale / context). Newest first, capped at 6. */
+  recentDomains?: string[];
   onboarded?: boolean;
 }
 

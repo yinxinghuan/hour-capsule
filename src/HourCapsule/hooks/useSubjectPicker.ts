@@ -20,9 +20,12 @@ commentary, no metaphor explanation, no adjective stacks, no prefix, no quotes, 
 
 PRIORITIES (in order):
 1. DIVERSITY (first principle) — never repeat anything in the AVOID lists verbatim OR in spirit.
-   Mix surreal and mundane freely. Vary materials, colors, scales, categories, kingdoms (object /
-   creature / food / fragment / artifact / specimen / paper / liquid / synthetic / organic / decayed).
-   Across calls, keep range maximal.
+   Every call you will receive a DOMAIN ANCHOR — you MUST pick an object that clearly belongs to
+   that domain and ONLY that domain. Vary scale, color, material, age, condition, and emotional
+   weight maximally inside the domain. Across calls the domain rotates, so cross-call variety is
+   guaranteed structurally — do not drift, do not fight the anchor, do not pick "close to" the
+   anchor. If the anchor says METAL, do not pick a leaf. If it says CHILD'S TOY, do not pick a
+   coin. Stay inside the lane.
 2. WORLD CONTEXT (used ONLY as temperature, never as content) —
      STEP A. Read the events list AS A WHOLE. Notice the overall TEMPERATURE of the day:
        heavy / restless / quiet / brittle / triumphant / weary / dispersed / suspended.
@@ -57,6 +60,9 @@ DO NOT output:
 - offensive, sexual, or politically charged material`;
 
 export interface PickArgs {
+  /** Hard anchor — picked object MUST live in this domain. Source of truth
+   *  for cross-call diversity even when avoid lists / events are empty. */
+  domainHint: string;
   worldNudge: string;
   /** Best-effort live world-events strings (HN top + Wikipedia news).
    *  May be empty if both sources failed — picker still works fine. */
@@ -68,19 +74,20 @@ export interface PickArgs {
 }
 
 export async function pickSubject(args: PickArgs): Promise<string> {
-  const { worldNudge, worldEvents = [], recentSelf, recentGlobal } = args;
+  const { domainHint, worldNudge, worldEvents = [], recentSelf, recentGlobal } = args;
   const avoidGlobal = recentGlobal.slice(0, 80);
   const avoidSelf = recentSelf.slice(0, 10);
   const events = worldEvents.slice(0, 8);
   const user =
+    `DOMAIN ANCHOR FOR THIS PULL (must stay inside this lane):\n  → ${domainHint}\n\n` +
     `Current moment: ${worldNudge}\n\n` +
     `Currently happening in the wider world (use as mood, never name directly):\n` +
-    (events.length ? events.map(s => '- ' + s).join('\n') : '(no live events available — lean on hour/season/moon)') +
+    (events.length ? events.map(s => '- ' + s).join('\n') : '(no live events available — lean on hour/season/moon and the domain anchor above)') +
     `\n\nAVOID — pulled by other players in the last hour (${avoidGlobal.length}):\n` +
     (avoidGlobal.length ? avoidGlobal.map(s => '- ' + s).join('\n') : '(none yet)') +
     `\n\nAVOID — this player's recent picks (${avoidSelf.length}):\n` +
     (avoidSelf.length ? avoidSelf.map(s => '- ' + s).join('\n') : '(none yet)') +
-    `\n\nPick ONE object now. Output only the noun phrase.`;
+    `\n\nPick ONE object that clearly fits the DOMAIN ANCHOR. Output only the noun phrase.`;
 
   const res = await fetch(CHAT_URL, {
     method: 'POST',

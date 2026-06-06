@@ -14,6 +14,7 @@ import { useSelfProfile } from './hooks/useSelfProfile';
 import { useBagGen } from './hooks/useBagGen';
 import { useField, type FieldEntry } from './hooks/useField';
 import { pickSubject } from './hooks/useSubjectPicker';
+import { pickDomain } from './data/domains';
 import {
   formatCountdown,
   formatStamp,
@@ -44,6 +45,7 @@ export default function HourCapsule() {
         likes: savedData?.likes ?? [],
         lastCollectAt: savedData?.lastCollectAt,
         collectsTotal: savedData?.collectsTotal ?? 0,
+        recentDomains: savedData?.recentDomains ?? [],
         onboarded: savedData?.onboarded ?? false,
       });
     }
@@ -98,6 +100,7 @@ export default function HourCapsule() {
   const [sealingStage, setSealingStage] = useState<'checking' | 'picking' | 'sealing'>('checking');
   const [sealingEvents, setSealingEvents] = useState<string[]>([]);
   const [sealingSubject, setSealingSubject] = useState<string>('');
+  const [sealingDomain, setSealingDomain] = useState<string>('');
   const [activeCapsule, setActiveCapsule] = useState<Capsule | null>(null);
   const [error, setError] = useState<string>('');
   const [showCooldownModal, setShowCooldownModal] = useState(false);
@@ -151,7 +154,14 @@ export default function HourCapsule() {
         .filter(Boolean);
       const recentSelf = mirror.capsules.slice(0, 12).map(c => c.subject).filter(Boolean);
 
+      // Domain anchor — random pick excluding the user's last 6 domains.
+      // Guarantees cross-call diversity even when avoid lists are empty
+      // and external news fetch is blocked by the platform CSP.
+      const domainHint = pickDomain(mirror.recentDomains ?? []);
+      setSealingDomain(domainHint);
+
       const subject = await pickSubject({
+        domainHint,
         worldNudge: worldNudge(),
         worldEvents,
         recentSelf,
@@ -191,11 +201,16 @@ export default function HourCapsule() {
   // One ritual action: sealing it into the public Field and your shelf.
   const handleSeal = () => {
     if (!mirror || !activeCapsule) return;
+    // Push the just-used domain into recentDomains, keep last 6.
+    const nextRecentDomains = sealingDomain
+      ? [sealingDomain, ...(mirror.recentDomains ?? []).filter(d => d !== sealingDomain)].slice(0, 6)
+      : (mirror.recentDomains ?? []);
     const nextSave: CapsuleSave = {
       ...mirror,
       lastCollectAt: activeCapsule.ts,
       collectsTotal: activeCapsule.serial,
       capsules: [activeCapsule, ...mirror.capsules],
+      recentDomains: nextRecentDomains,
     };
     setMirror(nextSave);
     persist(nextSave);
