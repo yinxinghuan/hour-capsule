@@ -159,11 +159,13 @@ export default function HourCapsule() {
       // Domain anchor — random pick excluding the user's last 6 domains.
       // Guarantees cross-call diversity even when avoid lists are empty
       // and external news fetch is blocked by the platform CSP.
-      const domainHint = pickDomain(mirror.recentDomains ?? []);
-      setSealingDomain(domainHint);
+      // Tier-weighted (80/15/5) so the picked domain also carries rarity
+      // — rare domains paint gold α + filigree; uncommon paint silver α.
+      const picked = pickDomain(mirror.recentDomains ?? []);
+      setSealingDomain(picked.phrase);
 
       const subject = await pickSubject({
-        domainHint,
+        domainHint: picked.phrase,
         worldNudge: worldNudge(),
         worldEvents,
         recentSelf,
@@ -189,6 +191,7 @@ export default function HourCapsule() {
         ownerName,
         ownerSerial: serial,
         isShiftChange,
+        rarity: picked.rarity,
       });
       await preloadImage(result.imageUrl);
 
@@ -198,6 +201,7 @@ export default function HourCapsule() {
         subject,
         imageUrl: result.imageUrl,
         serial,
+        rarity: picked.rarity,
       };
       setActiveCapsule(capsule);
       setPhase('reveal');

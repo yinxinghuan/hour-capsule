@@ -36,6 +36,11 @@ export default function Reveal({ capsule, onSeal }: Props) {
       <div className="tsp-reveal__inscription">{capsule.subject}</div>
       <div className="tsp-reveal__meta">
         <span className="tsp-reveal__metatag">{metaTag}</span>
+        {capsule.rarity && capsule.rarity !== 'common' && (
+          <span className={`tsp-rarity tsp-rarity--${capsule.rarity}`}>
+            {capsule.rarity}
+          </span>
+        )}
       </div>
 
       <div className="tsp-reveal__cast-title">seal it into the field</div>

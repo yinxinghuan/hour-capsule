@@ -9,12 +9,15 @@ export type Phase =
   | 'altar'      // personal collection tab
   ;
 
+export type Rarity = 'common' | 'uncommon' | 'rare';
+
 export interface Capsule {
   id: string;
   ts: number;           // collect timestamp — printed as MFG stamp inside the image
   subject: string;      // LLM-chosen English noun phrase
   imageUrl: string;
   serial: number;       // per-user lifetime sequence — printed as #N stamp
+  rarity?: Rarity;      // optional — older capsules may not have it (treated as 'common')
 }
 
 export interface CapsuleSave {

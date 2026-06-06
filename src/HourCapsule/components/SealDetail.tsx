@@ -61,7 +61,14 @@ export default function SealDetail({ capsule, author, like, onToggleLike, onClos
           <div className="tsp-detail__inscription">{capsule.subject}</div>
         )}
 
-        <div className="tsp-detail__metatag">{metaTag}</div>
+        <div className="tsp-detail__metatag">
+          {metaTag}
+          {capsule.rarity && capsule.rarity !== 'common' && (
+            <span className={`tsp-rarity tsp-rarity--${capsule.rarity}`}>
+              {capsule.rarity}
+            </span>
+          )}
+        </div>
 
         <div className="tsp-detail__foot">
           {author && !author.isSelf ? (
