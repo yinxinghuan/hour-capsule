@@ -49,6 +49,26 @@
     background: @pink; border-radius: 50%;
     margin-right: 8px;
   }
+  // Player avatar — replaces the static pink dot. Same baseline; the
+  // brand text after it stays at its original x-position so the layout
+  // doesn't visibly shift between unknown-profile + loaded-profile.
+  &__avatar {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+    background: rgba(244, 232, 208, 0.08);
+    border: 0.6px solid @line;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    &--initial {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 11px; font-weight: 500;
+      color: @cream-3; letter-spacing: 0;
+      text-transform: uppercase;
+    }
+  }
 }
 .tsp-toprule {
   position: absolute; top: 52px; left: 22px; right: 22px;

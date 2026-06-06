@@ -275,7 +275,11 @@ export default function HourCapsule() {
 
   return (
     <div className="tsp-root">
-      <TopBar rightLabel={nowLabel} />
+      <TopBar
+        rightLabel={nowLabel}
+        avatarUrl={profile?.avatarUrl}
+        userName={profile?.name}
+      />
 
       <div className="tsp-page">
         {phase === 'field' && (
