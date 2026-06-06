@@ -17,6 +17,10 @@ export interface BagSpec {
   mfgTs: number;         // collect timestamp in ms
   ownerName: string;     // display name, prefixed with '@' if missing
   ownerSerial: number;   // monotonic per-user lifetime counter
+  /** Shift-change hours (00 / 06 / 12 / 18 within the first 5 min) get
+   *  gold-amber MFG ink instead of white — small surprise reward for
+   *  collecting at the boundary, no rules to learn. */
+  isShiftChange?: boolean;
 }
 
 export interface BagResult {
@@ -32,6 +36,9 @@ function buildPrompt(spec: BagSpec): string {
   const owner = normalizeOwner(spec.ownerName);
   const serial = formatSerial(spec.ownerSerial);
   const mfg = formatStamp(spec.mfgTs);
+  const mfgInk = spec.isShiftChange
+    ? "soft warm amber-GOLD inkjet ink (NOT white — gold for shift-change hours)"
+    : "white inkjet ink";
   return [
     `Photorealistic studio product photograph of a vacuum-sealed transparent plastic bag containing ${spec.subject}.`,
     `Shot with 80mm lens at f/8, magazine-quality studio product photography.`,
@@ -40,7 +47,7 @@ function buildPrompt(spec: BagSpec): string {
     `The bag and the black background fill the entire square frame edge to edge full-bleed with no border, no panel, no side bars.`,
     `CRITICAL: the object is sealed INSIDE the plastic bag — diagonal X-shape and Y-shape specular highlight streaks from the studio softboxes visibly cross over and through the surface of the contents, partly obscuring and distorting parts of the object underneath. Bright bands of reflected studio light layer on TOP of the object, so the object reads as BEHIND the wrinkled plastic film, not floating in front of it. Plastic crease ridges and specular highlights run continuously across both the bag body AND the contents in one unbroken pattern.`,
     `In the BOTTOM-LEFT corner of the bag, a small minimalist Greek-letter alpha 'α' logo from the reference image is printed in MUTED FADED WHITE ink WITH SLIGHT TRANSPARENCY (NOT pure bright white, NOT fully opaque, softly translucent) on the plastic film, only about 7 percent of the bag width — kept consistently small and modest, never large or prominent, never more than 7 percent — picking up the plastic wrinkles and reflections, slightly distorted by the folds underneath, conforming to the surface of the bag, low prominence.`,
-    `Directly below the top heat-sealed zip-lock strip, on a flat un-creased horizontal band of the upper plastic body of the bag, a small subtle dot-matrix MFG date stamp reading 'MFG ${mfg}' is printed in white inkjet ink in a 5x7 dot-matrix font, only about 10 percent of the bag width wide, looking like a small real food-package production date stamp, slightly faded and uneven, low prominence, the white dots picking up the plastic film texture and following the wrinkles underneath.`,
+    `Directly below the top heat-sealed zip-lock strip, on a flat un-creased horizontal band of the upper plastic body of the bag, a small subtle dot-matrix MFG date stamp reading 'MFG ${mfg}' is printed in ${mfgInk} in a 5x7 dot-matrix font, only about 10 percent of the bag width wide, looking like a small real food-package production date stamp, slightly faded and uneven, low prominence, the dots picking up the plastic film texture and following the wrinkles underneath.`,
     `In the BOTTOM-RIGHT corner of the bag, on the lower plastic body, a small subtle owner label printed in white inkjet ink in the same 5x7 dot-matrix font, only about 10 percent of the bag width wide, arranged as TWO STACKED LINES: the top line reads '${owner}' (the username) and directly below it on a second line reads '${serial}' (the serial number). Both lines are the same small size and low prominence as the MFG stamp, slightly faded, the white dots picking up the plastic wrinkles.`,
     `No other text, no barcode, no brand name, no additional logos.`,
     `Do NOT include: trapped dust particles, fingerprint smudges, floating specks, sparkles, glitter, metallic sheen, mylar look — keep the plastic clean and natural.`,

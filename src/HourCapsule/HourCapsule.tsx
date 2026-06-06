@@ -25,6 +25,7 @@ import { fetchWorldEvents } from './utils/news';
 import { preloadImage } from './utils/preload';
 import { newId } from './utils/rng';
 import type { Capsule, CapsuleSave, Phase } from './types';
+import { STREAK_GRACE_MS, COLLECT_COOLDOWN_MS } from './types';
 import './HourCapsule.less';
 
 const GAME_ID = 'hour-capsule';
@@ -46,6 +47,7 @@ export default function HourCapsule() {
         lastCollectAt: savedData?.lastCollectAt,
         collectsTotal: savedData?.collectsTotal ?? 0,
         recentDomains: savedData?.recentDomains ?? [],
+        streak: savedData?.streak ?? 0,
         onboarded: savedData?.onboarded ?? false,
       });
     }
@@ -174,12 +176,19 @@ export default function HourCapsule() {
       const ts = Date.now();
       const serial = (mirror.collectsTotal ?? 0) + 1;
       const ownerName = profile?.name ?? 'guest';
+      // Shift-change hours = the first 5 min of 00 / 06 / 12 / 18.
+      // Capsules sealed here get a gold MFG ink instead of white — tiny
+      // surprise reward, no rule to learn.
+      const tsDate = new Date(ts);
+      const isShiftChange =
+        [0, 6, 12, 18].includes(tsDate.getHours()) && tsDate.getMinutes() < 5;
 
       const result = await bagGen.generate({
         subject,
         mfgTs: ts,
         ownerName,
         ownerSerial: serial,
+        isShiftChange,
       });
       await preloadImage(result.imageUrl);
 
@@ -205,12 +214,24 @@ export default function HourCapsule() {
     const nextRecentDomains = sealingDomain
       ? [sealingDomain, ...(mirror.recentDomains ?? []).filter(d => d !== sealingDomain)].slice(0, 6)
       : (mirror.recentDomains ?? []);
+    // Streak: continues if this seal happens within GRACE after cooldown
+    // ended. Else resets to 1. First-ever collect = 1.
+    let nextStreak: number;
+    if (!mirror.lastCollectAt) {
+      nextStreak = 1;
+    } else {
+      const elapsed = activeCapsule.ts - mirror.lastCollectAt;
+      nextStreak = elapsed <= COLLECT_COOLDOWN_MS + STREAK_GRACE_MS
+        ? (mirror.streak ?? 0) + 1
+        : 1;
+    }
     const nextSave: CapsuleSave = {
       ...mirror,
       lastCollectAt: activeCapsule.ts,
       collectsTotal: activeCapsule.serial,
       capsules: [activeCapsule, ...mirror.capsules],
       recentDomains: nextRecentDomains,
+      streak: nextStreak,
     };
     setMirror(nextSave);
     persist(nextSave);
@@ -279,6 +300,7 @@ export default function HourCapsule() {
         rightLabel={nowLabel}
         avatarUrl={profile?.avatarUrl}
         userName={profile?.name}
+        streak={mirror.streak ?? 0}
       />
 
       <div className="tsp-page">

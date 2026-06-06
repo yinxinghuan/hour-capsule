@@ -29,7 +29,14 @@ export interface CapsuleSave {
    *  the next random draw so consecutive pulls span different "kingdoms"
    *  (material / scale / context). Newest first, capped at 6. */
   recentDomains?: string[];
+  /** Consecutive-hour collect streak. +1 if the next seal happens within
+   *  GRACE_MS after the cooldown ended; resets to 1 if missed longer. */
+  streak?: number;
   onboarded?: boolean;
 }
+
+/** Streak grace period — once the 1h cooldown ends, the player has this
+ *  long to seal the next capsule before the streak resets. 1 hour. */
+export const STREAK_GRACE_MS = 60 * 60 * 1000;
 
 export const COLLECT_COOLDOWN_MS = 60 * 60 * 1000;   // 1 hour

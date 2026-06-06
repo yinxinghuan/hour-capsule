@@ -19,6 +19,7 @@ interface Props {
 }
 
 const TICKER_INTERVAL_MS = 2200;
+const COUNTDOWN_START_S = 30;
 
 export default function Pressing({ stage, events = [], subject }: Props) {
   // Rotate the world-event ticker during checking/picking.
@@ -33,6 +34,17 @@ export default function Pressing({ stage, events = [], subject }: Props) {
   }, [stage, events.length]);
 
   const tickerLine = events.length > 0 ? events[tickerIdx % events.length] : '';
+
+  // Live countdown — starts at 30, resets on every stage change. When it
+  // bottoms out and the result still isn't here, copy switches to
+  // "almost done…" so the wait doesn't feel stuck.
+  const [seconds, setSeconds] = useState(COUNTDOWN_START_S);
+  useEffect(() => {
+    setSeconds(COUNTDOWN_START_S);
+    const t = setInterval(() => setSeconds(s => Math.max(0, s - 1)), 1000);
+    return () => clearInterval(t);
+  }, [stage]);
+  const countdownLabel = seconds > 0 ? `~ ${seconds}s` : 'almost there…';
 
   let headline: string;
   let footLabel: string;
@@ -81,7 +93,7 @@ export default function Pressing({ stage, events = [], subject }: Props) {
       <div className="tsp-pressing__foot">
         <em>{footLabel} your capsule</em>
         <div className="tsp-loader"><span /><span /><span /></div>
-        <div className="tsp-pressing__est">~ 30s</div>
+        <div className="tsp-pressing__est">{countdownLabel}</div>
       </div>
     </div>
   );

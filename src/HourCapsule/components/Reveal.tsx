@@ -1,8 +1,14 @@
 // Reveal + Seal — show the freshly-gen'd capsule and one ritual button.
 // Every capsule is auto-public: confirming seals it into the Field and
 // keeps a copy in your shelf.
+//
+// Two micro-polish details:
+//   · The card image fades in + scales 0.95→1 for ~600ms ("just minted")
+//   · The MFG stamp ticks each second so it reads as alive, like a real
+//     production line clock — strengthens the "fresh from the press" feel
+import { useEffect, useState } from 'react';
 import type { Capsule } from '../types';
-import { formatStamp, formatSerial } from '../utils/day';
+import { formatStampWithSeconds, formatSerial } from '../utils/day';
 
 interface Props {
   capsule: Capsule;
@@ -10,7 +16,13 @@ interface Props {
 }
 
 export default function Reveal({ capsule, onSeal }: Props) {
-  const metaTag = `${formatStamp(capsule.ts)} · ${formatSerial(capsule.serial)}`;
+  const [tickStamp, setTickStamp] = useState(() => formatStampWithSeconds(Date.now()));
+  useEffect(() => {
+    const t = setInterval(() => setTickStamp(formatStampWithSeconds(Date.now())), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const metaTag = `${tickStamp} · ${formatSerial(capsule.serial)}`;
 
   return (
     <div className="tsp-reveal">

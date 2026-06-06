@@ -1,7 +1,13 @@
 // Personal collection — every capsule you've collected. 2-col grid,
 // newest first.
-import { relativeAgo } from '../utils/day';
+//
+// Each cell carries a subject-hash-derived hue accent (top hairline +
+// faint glow), so the shelf becomes a deterministic colour map of your
+// collection — different domains read at a glance, identical objects
+// would land on the same tint.
+import { relativeAgo, hueFromSubject } from '../utils/day';
 import type { Capsule } from '../types';
+import type { CSSProperties } from 'react';
 
 interface Props {
   capsules: Capsule[];
@@ -26,15 +32,28 @@ export default function Altar({ capsules, onOpen }: Props) {
       <div className="tsp-altar__rule" />
 
       <div className="tsp-altar__grid">
-        {capsules.map((capsule) => (
-          <div className="tsp-altar__cell" key={capsule.id} onClick={() => onOpen(capsule)} role="button">
-            <div className="tsp-altar__face">
-              <img src={capsule.imageUrl} alt={capsule.subject} draggable={false} />
+        {capsules.map((capsule) => {
+          const hue = hueFromSubject(capsule.subject);
+          const style = {
+            '--tint': `hsl(${hue}deg, 60%, 70%)`,
+            '--tint-glow': `hsl(${hue}deg, 55%, 55% / 0.22)`,
+          } as CSSProperties;
+          return (
+            <div
+              className="tsp-altar__cell"
+              key={capsule.id}
+              onClick={() => onOpen(capsule)}
+              role="button"
+              style={style}
+            >
+              <div className="tsp-altar__face">
+                <img src={capsule.imageUrl} alt={capsule.subject} draggable={false} />
+              </div>
+              <div className="tsp-altar__inscription">{capsule.subject}</div>
+              <div className="tsp-altar__date">{relativeAgo(capsule.ts, 'en')}</div>
             </div>
-            <div className="tsp-altar__inscription">{capsule.subject}</div>
-            <div className="tsp-altar__date">{relativeAgo(capsule.ts, 'en')}</div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
