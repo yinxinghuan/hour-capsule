@@ -22,6 +22,7 @@ import {
 } from './utils/day';
 import { worldNudge } from './utils/world';
 import { fetchWorldEvents } from './utils/news';
+import { playPop } from './utils/sound';
 import { preloadImage } from './utils/preload';
 import { newId } from './utils/rng';
 import type { Capsule, CapsuleSave, Phase } from './types';
@@ -114,6 +115,24 @@ export default function HourCapsule() {
   useEffect(() => {
     const t = setInterval(() => setTick(n => n + 1), 60_000);
     return () => clearInterval(t);
+  }, []);
+
+  // Global tap feedback — one capture-phase pointerdown listener fires
+  // playPop() on every button / role=button / a[href] in the app
+  // unless the element opts out via [data-no-feedback]. Components that
+  // play a louder bespoke sound (Like → playLike) carry data-no-feedback.
+  // [[global-tap-feedback-pattern]]
+  useEffect(() => {
+    const onTap = (ev: PointerEvent) => {
+      const t = ev.target as Element | null;
+      if (!t || !t.closest) return;
+      const interactive = t.closest('button, [role="button"], a[href]');
+      if (!interactive) return;
+      if (interactive.closest('[data-no-feedback]')) return;
+      playPop();
+    };
+    document.addEventListener('pointerdown', onTap, { capture: true });
+    return () => document.removeEventListener('pointerdown', onTap, { capture: true } as EventListenerOptions);
   }, []);
 
   // Demo URL hooks

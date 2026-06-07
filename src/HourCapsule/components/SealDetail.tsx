@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { relativeAgo, formatStamp, formatSerial } from '../utils/day';
 import { openAigramProfile, isInAigram } from '@shared/runtime/bridge';
 import { playLike, playUnlike, hapticTap } from '../utils/sound';
+import { saveCapsuleImage } from '../utils/download';
 import type { Capsule } from '../types';
 
 export interface DetailAuthor {
@@ -93,6 +94,7 @@ export default function SealDetail({ capsule, author, like, onToggleLike, onClos
         <button
           className={`tsp-detail__like${like.liked ? ' is-liked' : ''}${bursting ? ' is-bursting' : ''}`}
           onClick={handleLikeTap}
+          data-no-feedback
         >
           <span className="tsp-detail__like-glyph">{like.liked ? '♥' : '♡'}</span>
           <span className="tsp-detail__like-count">
@@ -100,6 +102,16 @@ export default function SealDetail({ capsule, author, like, onToggleLike, onClos
               ? `${like.count} ${like.count === 1 ? 'like' : 'likes'}`
               : 'Be the first to like'}
           </span>
+        </button>
+
+        <button
+          className="tsp-detail__save"
+          onClick={async () => {
+            const fname = `hour-capsule-${formatSerial(capsule.serial).replace('#', '')}.png`;
+            await saveCapsuleImage(capsule.imageUrl, fname);
+          }}
+        >
+          Save image
         </button>
 
         {canDelete && (

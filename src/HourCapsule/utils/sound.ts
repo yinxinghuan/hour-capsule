@@ -59,6 +59,29 @@ export function playUnlike() {
   }
 }
 
+/** Subtle pop for any generic button tap — quieter and shorter than
+ *  playLike. Used by the global capture-phase pointerdown listener so
+ *  every tappable button has a quiet click without per-component wiring. */
+export function playPop() {
+  try {
+    const a = ctx();
+    const t0 = a.currentTime;
+    const osc = a.createOscillator();
+    const gain = a.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(720, t0);
+    osc.frequency.exponentialRampToValueAtTime(880, t0 + 0.04);
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(0.07, t0 + 0.006);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.10);
+    osc.connect(gain).connect(a.destination);
+    osc.start(t0);
+    osc.stop(t0 + 0.12);
+  } catch {
+    /* no-op */
+  }
+}
+
 /** Best-effort vibrate — iOS Safari ignores, Android responds. */
 export function hapticTap() {
   try {

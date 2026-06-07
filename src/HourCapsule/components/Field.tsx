@@ -132,6 +132,7 @@ function FieldCard({
         <button
           className={`tsp-seal__act${like.liked ? ' is-liked' : ''}${bursting ? ' is-bursting' : ''}`}
           onClick={handleLikeTap}
+          data-no-feedback
         >
           <span className="glyph">{like.liked ? '♥' : '♡'}</span>
           {like.count > 0 ? like.count : 'Like'}
