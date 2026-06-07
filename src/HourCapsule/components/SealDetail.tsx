@@ -54,7 +54,12 @@ export default function SealDetail({ capsule, author, like, onToggleLike, onClos
           ✕
         </button>
 
-        <div className="tsp-detail__img">
+        <div
+          className="tsp-detail__img"
+          onClick={onClose}
+          role="button"
+          aria-label="Close"
+        >
           <img src={capsule.imageUrl} alt={capsule.subject} draggable={false} />
         </div>
 
