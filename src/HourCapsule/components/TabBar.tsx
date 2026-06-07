@@ -45,7 +45,10 @@ export default function TabBar({ active, lastCollectAt, onTab, onCollect }: Prop
             <span className="quota">{countdown}</span>
           </>
         ) : (
-          <span className="label label--ready">Collect</span>
+          <>
+            <span className="label label--ready">Collect</span>
+            <span className="arrow" aria-hidden>→</span>
+          </>
         )}
       </button>
 
