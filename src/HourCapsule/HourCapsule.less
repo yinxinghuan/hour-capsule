@@ -846,19 +846,32 @@
   strong { color: @pink; font-weight: 600; font-style: normal;
            font-family: 'Montserrat', sans-serif; letter-spacing: 0.04em; }
 }
+// Solid-fill pink pill matching the bottom-bar COLLECT button — no
+// border, so no sub-pixel AA gradient-on-curve glitch on iOS WebView.
 .tsp-modal__cta {
-  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-family: 'Montserrat', sans-serif; font-weight: 800;
   font-size: 11px; letter-spacing: 0.42em;
   text-transform: uppercase;
-  background: transparent;
-  color: @pink;
-  border: 0.6px solid @pink;
-  padding: 12px 30px; border-radius: 9999px;
-  text-indent: 0.42em;     // compensate trailing letter-spacing so 'OK' is truly centered
+  background: linear-gradient(180deg, #F5B1C7 0%, #C97AA3 100%);
+  color: #2A0612;
+  border: none;
+  padding: 13px 36px; border-radius: 9999px;
+  text-indent: 0.42em;
+  box-shadow:
+    0 10px 22px rgba(245, 177, 199, 0.38),
+    0 0 40px rgba(245, 177, 199, 0.14),
+    inset 0 1px 0 rgba(255, 220, 230, 0.7),
+    inset 0 -1px 0 rgba(140, 60, 90, 0.4);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background 160ms ease, transform 160ms ease;
-  &:active { transform: scale(0.97); background: rgba(245, 177, 199, 0.08); }
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  &:active {
+    transform: scale(0.97);
+    box-shadow:
+      0 6px 14px rgba(245, 177, 199, 0.32),
+      inset 0 1px 0 rgba(255, 220, 230, 0.6),
+      inset 0 -1px 0 rgba(140, 60, 90, 0.5);
+  }
 }
 
 // ─── Seal detail overlay (tap a Field/Altar seal) ─────────────────
