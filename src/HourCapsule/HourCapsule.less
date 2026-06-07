@@ -784,6 +784,11 @@
     inset 0 -1px 0 rgba(140, 60, 90, 0.4);
 
   .label { color: #2A0612; }
+  // Ready state shows only "Collect" alone (no quota pill) — beef the
+  // type up a touch since it's the sole visual content of the pill.
+  .label--ready {
+    font-size: 12px; letter-spacing: 0.48em;
+  }
   .quota {
     font-family: 'Montserrat', sans-serif; font-weight: 800;
     font-size: 9px; letter-spacing: 0.32em;
