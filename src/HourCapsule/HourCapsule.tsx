@@ -408,7 +408,7 @@ function CooldownModal({ remaining, onClose }: { remaining: number; onClose: () 
           The vacuum re-pressurises in
           <strong> {formatCountdown(remaining)}</strong>.
         </p>
-        <button className="tsp-modal__cta" onPointerDown={onClose}>
+        <button className="tsp-modal__cta" onClick={onClose}>
           OK
         </button>
       </div>
