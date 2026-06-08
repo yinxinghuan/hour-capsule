@@ -1241,17 +1241,28 @@
 }
 
 // ─── Toast (gen error) ────────────────────────────────────────────
+// Lives at root in HourCapsule.tsx (not under any phase) so it survives
+// the post-failure phase flip. Element is a <button> for tap-to-dismiss.
 
 .tsp-toast {
-  position: absolute; top: 80px; left: 22px; right: 22px;
-  z-index: 50;
+  // Fixed (not absolute) so it stays put even if the underlying phase
+  // changes scroll position underneath it.
+  position: fixed; top: env(safe-area-inset-top, 0px); top: max(env(safe-area-inset-top, 24px), 70px);
+  left: 14px; right: 14px;
+  z-index: 200;
   padding: 14px 18px;
-  background: rgba(60, 20, 30, 0.85);
+  background: rgba(60, 20, 30, 0.92);
   border: 0.5px solid @pink-q;
   color: @cream;
   font-family: 'Cormorant Garamond', serif; font-style: italic;
-  font-size: 14px; text-align: center;
+  font-size: 14px; text-align: center; line-height: 1.4;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
   animation: tsp-modal-in 240ms ease-out;
+  &:active { background: rgba(60, 20, 30, 1); }
 }
 
 // ─── Watermark ────────────────────────────────────────────────────

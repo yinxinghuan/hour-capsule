@@ -110,6 +110,16 @@ export default function HourCapsule() {
   const [showCooldownModal, setShowCooldownModal] = useState(false);
   const [detail, setDetail] = useState<{ capsule: Capsule; author?: DetailAuthor } | null>(null);
 
+  // Auto-dismiss the error toast after 6s so it doesn't stick. Tap on
+  // the toast also dismisses (handled in the render). The toast itself
+  // lives at root, not under phase==='sealing', because the catch
+  // handler flips phase back before the sealing render ever sees it.
+  useEffect(() => {
+    if (!error) return;
+    const t = setTimeout(() => setError(''), 6000);
+    return () => clearTimeout(t);
+  }, [error]);
+
   // Refresh tick — repaints the TopBar timestamp every minute so the
   // displayed "now" stays current without re-rendering anything heavy.
   const [, setTick] = useState(0);
@@ -361,14 +371,11 @@ export default function HourCapsule() {
           )
         )}
         {phase === 'sealing' && (
-          <>
-            {error && <div className="tsp-toast">{error}</div>}
-            <Pressing
-              stage={sealingStage}
-              events={sealingEvents}
-              subject={sealingSubject}
-            />
-          </>
+          <Pressing
+            stage={sealingStage}
+            events={sealingEvents}
+            subject={sealingSubject}
+          />
         )}
         {phase === 'reveal' && activeCapsule && (
           <Reveal capsule={activeCapsule} onSeal={handleSeal} />
@@ -406,6 +413,17 @@ export default function HourCapsule() {
           onClose={() => setDetail(null)}
           onDelete={handleDeleteCapsule}
         />
+      )}
+
+      {/* Toast lives at root, NOT inside phase==='sealing', because the
+          catch handler flips phase back to 'field' in the same React
+          batch as setError — if the toast were scoped to sealing it
+          would never render after a failure. Tap dismisses immediately;
+          auto-dismiss runs via the useEffect below. */}
+      {error && (
+        <button className="tsp-toast" onClick={() => setError('')}>
+          {error}
+        </button>
       )}
 
       <Watermark />
