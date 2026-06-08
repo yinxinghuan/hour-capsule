@@ -154,6 +154,154 @@
   gap: 38px;
 }
 
+// ─── Field (outside-AlterU demo CTA) ──────────────────────────────
+// Replaces .tsp-field when isInAigram=false. Borrows the same gutter
+// + scroll behavior as Field so the page geometry stays consistent.
+
+.tsp-demo {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 22px 120px;
+  display: flex; flex-direction: column;
+}
+.tsp-demo__hd {
+  padding-top: 6px;
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 4px;
+}
+.tsp-demo__title {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-weight: 400; font-size: 30px; color: @cream;
+  line-height: 1;
+}
+.tsp-demo__count {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 9px; letter-spacing: 0.4em;
+  color: @pink; text-transform: uppercase;
+}
+.tsp-demo__sub {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 13px; color: @cream-3;
+  margin-bottom: 14px;
+}
+.tsp-demo__rule {
+  height: 0; border-top: 0.5px solid @line-d;
+  margin-bottom: 20px;
+}
+// Hero capsule (player's latest from local save). Tappable → opens
+// its Detail. Negative side margins so it bleeds the gutter the
+// same as the Detail page's hero crop — but stays at 1:1 here since
+// it's a thumbnail-ish role inside the Field layout, not the artifact
+// page itself.
+.tsp-demo__hero {
+  position: relative;
+  width: calc(100% + 44px);
+  margin: 0 -22px 20px;
+  aspect-ratio: 1 / 1;
+  background: #000;
+  border: none; padding: 0; cursor: pointer;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  img {
+    display: block; width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 240ms ease;
+  }
+  &:active img { transform: scale(1.02); }
+}
+.tsp-demo__hero-tag {
+  position: absolute; top: 12px; left: 12px;
+  padding: 4px 8px;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 7.5px; letter-spacing: 0.32em;
+  color: @cream-2; text-transform: uppercase;
+  background: rgba(10, 5, 8, 0.55);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+// Sample hero teaser variant: not the player's capsule, just the
+// official poster as a "what this game makes" example. Pink-tinted
+// tag + non-tappable cursor differentiate it from "YOUR LATEST".
+.tsp-demo__hero--sample {
+  cursor: default;
+  img { transition: none; }
+  &:active img { transform: none; }
+}
+.tsp-demo__hero-tag--sample {
+  color: @pink;
+  border: 0.5px solid rgba(245, 177, 199, 0.4);
+}
+.tsp-demo__pitch {
+  margin: 0 0 22px;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 15.5px; line-height: 1.5; color: @cream-2;
+  text-align: center;
+  p { margin: 10px 0 0; }
+}
+// Live phantom count of "others sealed this hour". No real number
+// available outside AlterU — slowly drifting integer just communicates
+// that something IS happening behind the closed door.
+.tsp-demo__counter {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 22px; line-height: 1.25; color: @cream;
+  span {
+    display: block;
+    font-size: 13.5px; color: @cream-3;
+    margin-top: 2px;
+  }
+}
+// Primary CTA — only filled pill in the whole game. Not subtle on
+// purpose: this IS the next step for an off-platform visitor. Pink
+// fill, not outline.
+.tsp-demo__cta {
+  display: block; width: 100%;
+  text-align: center;
+  padding: 16px 18px;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 11px; letter-spacing: 0.34em;
+  color: #2A0612; text-transform: uppercase;
+  background: @pink;
+  border: none; border-radius: 9999px;
+  text-decoration: none; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 160ms ease, transform 120ms ease;
+  box-shadow: 0 0 24px rgba(245, 177, 199, 0.22);
+  &:active { background: #E89AB5; transform: scale(0.98); }
+}
+.tsp-demo__cta-sub {
+  margin-top: 10px;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 12px; color: @cream-4;
+  text-align: center;
+}
+.tsp-demo__strip-eyebrow {
+  margin-top: 32px; margin-bottom: 12px;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 8px; letter-spacing: 0.4em;
+  color: @cream-4; text-transform: uppercase;
+  text-align: center;
+}
+.tsp-demo__strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.tsp-demo__strip-cell {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #000;
+  border: none; padding: 0; cursor: pointer;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  opacity: 0.7;
+  transition: opacity 160ms ease, transform 120ms ease;
+  &:active { opacity: 1; transform: scale(0.97); }
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+}
+
 // ─── Seal card ────────────────────────────────────────────────────
 
 .tsp-seal {

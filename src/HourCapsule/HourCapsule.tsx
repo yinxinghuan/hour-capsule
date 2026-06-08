@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useGameSave } from '@shared/save';
 import { useGameEvent } from '@shared/runtime';
-import { telegramId } from '@shared/runtime/bridge';
+import { telegramId, isInAigram } from '@shared/runtime/bridge';
 import TopBar from './components/TopBar';
 import TabBar, { type Tab } from './components/TabBar';
 import Field from './components/Field';
+import FieldDemoCTA from './components/FieldDemoCTA';
 import Pressing from './components/Pressing';
 import Reveal from './components/Reveal';
 import Altar from './components/Altar';
@@ -331,22 +332,33 @@ export default function HourCapsule() {
 
       <div className="tsp-page">
         {phase === 'field' && (
-          <Field
-            entries={fieldEntries}
-            loaded={field.loaded}
-            likeInfo={likeInfo}
-            onToggleLike={handleToggleLike}
-            selfUserId={telegramId || undefined}
-            onOpen={(entry) => setDetail({
-              capsule: entry.capsule,
-              author: {
-                userId: entry.userId,
-                userName: entry.userName,
-                userAvatarUrl: entry.userAvatarUrl,
-                isSelf: entry.userId === (telegramId || undefined),
-              },
-            })}
-          />
+          isInAigram ? (
+            <Field
+              entries={fieldEntries}
+              loaded={field.loaded}
+              likeInfo={likeInfo}
+              onToggleLike={handleToggleLike}
+              selfUserId={telegramId || undefined}
+              onOpen={(entry) => setDetail({
+                capsule: entry.capsule,
+                author: {
+                  userId: entry.userId,
+                  userName: entry.userName,
+                  userAvatarUrl: entry.userAvatarUrl,
+                  isSelf: entry.userId === (telegramId || undefined),
+                },
+              })}
+            />
+          ) : (
+            // Shared link opened outside AlterU. Bridge APIs (cross-user
+            // wall, profile) all time out, but Collect/Reveal/Detail still
+            // work via direct fetch — give them a real demo of the game
+            // and route them to the App Store.
+            <FieldDemoCTA
+              ownCapsules={mirror.capsules}
+              onOpen={(capsule) => setDetail({ capsule })}
+            />
+          )
         )}
         {phase === 'sealing' && (
           <>
