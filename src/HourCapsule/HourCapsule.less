@@ -898,14 +898,18 @@
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   z-index: 110;
-  display: flex; align-items: center; justify-content: center;
-  padding: 16px 14px;
+  // Block + top-aligned scroll: flex+align-items:center clips both ends when
+  // content is taller than viewport. Top padding clears the close button (-10
+  // overshoot) and iOS notch; bottom padding clears the Aigram action bar.
+  padding: 48px 14px 96px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   animation: tsp-modal-in 200ms ease-out;
 }
 .tsp-detail__card {
   position: relative;
   width: 100%; max-width: 460px;
+  margin: 0 auto;
   display: flex; flex-direction: column; align-items: center;
 }
 .tsp-detail__close {
