@@ -21,19 +21,51 @@ interface Props {
 const TICKER_INTERVAL_MS = 2200;
 const COUNTDOWN_START_S = 30;
 
+// Quiet whispers of what's happening behind the curtain during the
+// sealing wait — gen-image, stamping, vacuum, archiving. Rotated so the
+// 10-20s of dead air feels like the bag is being actively built.
+const SEALING_WHISPERS = [
+  'calibrating vacuum pressure',
+  'inking the mfg timestamp',
+  'filing your owner serial',
+  'pressing the seal strips',
+  'measuring the bag — 1024 micron film',
+  'dusting with sterile light',
+  'logging this hour to the archive',
+  'matching the α tag to its domain',
+  'spinning down the centrifuge',
+  'checking the bag for pinholes',
+];
+
+type TickerItem = { kind: 'event' | 'whisper'; text: string };
+
 export default function Pressing({ stage, events = [], subject }: Props) {
-  // Rotate the world-event ticker during checking/picking.
+  // Pool the ticker draws from.
+  //   · checking / picking  → world events only (curator's reading list)
+  //   · sealing             → world events FIRST + ALL of them, then a
+  //                           couple of process whispers as filler. Real
+  //                           headlines are the more interesting content,
+  //                           so they get primacy + a brighter style.
+  const tickerPool: TickerItem[] =
+    stage === 'sealing'
+      ? [
+          ...events.map(e => ({ kind: 'event' as const, text: e })),
+          ...SEALING_WHISPERS.map(w => ({ kind: 'whisper' as const, text: w })),
+        ]
+      : events.map(e => ({ kind: 'event' as const, text: e }));
+
   const [tickerIdx, setTickerIdx] = useState(0);
   useEffect(() => {
-    if (stage === 'sealing' || events.length === 0) return;
+    setTickerIdx(0);
+    if (tickerPool.length === 0) return;
     const t = setInterval(
-      () => setTickerIdx(i => (i + 1) % events.length),
+      () => setTickerIdx(i => (i + 1) % tickerPool.length),
       TICKER_INTERVAL_MS,
     );
     return () => clearInterval(t);
-  }, [stage, events.length]);
+  }, [stage, tickerPool.length]);
 
-  const tickerLine = events.length > 0 ? events[tickerIdx % events.length] : '';
+  const tickerItem = tickerPool.length > 0 ? tickerPool[tickerIdx % tickerPool.length] : null;
 
   // Live countdown — starts at 30, resets on every stage change. When it
   // bottoms out and the result still isn't here, copy switches to
@@ -84,10 +116,21 @@ export default function Pressing({ stage, events = [], subject }: Props) {
         <div className="tsp-pressing__subject">{subject}</div>
       )}
 
-      {/* During checking/picking, a tiny ticker peeks at what the curator
-          is reading — without exposing every headline at once. */}
-      {stage !== 'sealing' && tickerLine && (
-        <div className="tsp-pressing__ticker">{tickerLine}</div>
+      {/* Ticker: world events get primacy + a brighter style; process
+          whispers are filler so the ticker never goes blank. */}
+      {tickerItem && (
+        <div
+          key={`${tickerItem.kind}-${tickerIdx}`}
+          className={
+            'tsp-pressing__ticker' +
+            (tickerItem.kind === 'event' ? ' tsp-pressing__ticker--event' : '')
+          }
+        >
+          {tickerItem.kind === 'event' && stage === 'sealing' && (
+            <span className="tsp-pressing__ticker-tag">from the wire · </span>
+          )}
+          {tickerItem.text}
+        </div>
       )}
 
       <div className="tsp-pressing__foot">

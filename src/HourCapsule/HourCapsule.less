@@ -507,6 +507,20 @@
   max-width: 360px;
   align-self: center;
   animation: tsp-ticker-fade 2200ms ease-in-out both;
+
+  // World-event lines (real headlines) get a brighter, slightly larger
+  // treatment — they're the substantive content, the rest are filler.
+  &--event {
+    color: @cream-2;
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    max-width: 380px;
+  }
+}
+.tsp-pressing__ticker-tag {
+  font-family: 'Montserrat', sans-serif; font-weight: 600;
+  font-size: 9px; letter-spacing: 0.3em;
+  color: @pink; text-transform: uppercase;
 }
 @keyframes tsp-ticker-fade {
    0%  { opacity: 0; }
