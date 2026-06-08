@@ -901,7 +901,7 @@
   // Block + top-aligned scroll: flex+align-items:center clips both ends when
   // content is taller than viewport. Top padding clears the close button (-10
   // overshoot) and iOS notch; bottom padding clears the Aigram action bar.
-  padding: 48px 14px 96px;
+  padding: 24px 14px 96px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   animation: tsp-modal-in 200ms ease-out;
@@ -921,11 +921,27 @@
   z-index: 2;
 }
 .tsp-detail__img {
-  width: 100%; aspect-ratio: 1 / 1;
+  // Negative side margins bleed the bag image past the card's 14px
+  // horizontal gutter so the capsule reads edge-to-edge on phones.
+  // 3:4 container (taller than the 1:1 source) + object-fit:cover
+  // anchors the image by HEIGHT — the bag's top seal teeth and
+  // bottom maker-stamp stay 100% visible, while the slack on the
+  // plastic side seal gets cropped ~16.7% per edge. The gen-image is
+  // 1:1 but the bag artwork itself is a vertical rectangle with
+  // mostly-empty alpha on either side, so the crop chews through
+  // negative space before it ever reaches the bag.
+  width: calc(100% + 28px);
+  margin-left: -14px;
+  margin-right: -14px;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
   background: #000;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
-  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  img {
+    display: block;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
 }
 .tsp-detail__inscription {
   margin-top: 20px;
