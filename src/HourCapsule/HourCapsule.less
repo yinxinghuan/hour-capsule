@@ -933,26 +933,56 @@
   font-size: 19px; line-height: 1.4; color: @cream;
   text-align: center;
 }
-.tsp-detail__metatag {
+
+// Byline: author chip (avatar + name) on its own slim centered line,
+// right under the subject. Replaces the bottom foot — cross-user "who"
+// is now the second thing readable after the artifact, not buried.
+.tsp-detail__byline {
   margin-top: 14px;
+  display: flex; justify-content: center;
+}
+.tsp-detail__author {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: none; border: none; padding: 0; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.tsp-detail__avatar {
+  width: 22px; height: 22px; border-radius: 50%;
+  object-fit: cover; background: @cream-4;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 10px; color: #2A0612;
+}
+.tsp-detail__name {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 9px; letter-spacing: 0.22em;
+  color: @cream-2; text-transform: uppercase;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 200px;
+}
+.tsp-detail__name--self { color: @pink; }
+
+.tsp-detail__metatag {
+  margin-top: 10px;
   font-family: 'Montserrat', sans-serif; font-weight: 700;
   font-size: 8.5px; letter-spacing: 0.34em;
   color: @cream-3; text-transform: uppercase;
   text-align: center;
 }
-// Frozen-at-seal-time world headlines. Eyebrow + list, dim but readable,
-// HN/World/Featured tag in pink so the source-of-truth flavour reads.
+
+// Frozen-at-seal-time world headlines. Eyebrow + clean italic list, no
+// box, no film, no rotation — the quiet typography is the artifact-feel.
 .tsp-detail__wire {
-  margin-top: 22px;
+  margin-top: 24px;
   width: 100%;
-  padding-top: 14px; border-top: 0.5px solid @line-d;
+  padding-top: 16px; border-top: 0.5px solid @line-d;
 }
 .tsp-detail__wire-eyebrow {
   font-family: 'Montserrat', sans-serif; font-weight: 700;
   font-size: 8px; letter-spacing: 0.36em;
   color: @cream-4; text-transform: uppercase;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .tsp-detail__wire-list {
   list-style: none; margin: 0; padding: 0;
@@ -976,41 +1006,9 @@
   flex: 1 1 auto;
   overflow-wrap: anywhere;
 }
-.tsp-detail__foot {
-  margin-top: 20px;
-  width: 100%;
-  display: flex; align-items: center; justify-content: space-between;
-  padding-top: 14px; border-top: 0.5px solid @line-d;
-}
-.tsp-detail__author {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: none; border: none; padding: 0; cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-.tsp-detail__avatar {
-  width: 22px; height: 22px; border-radius: 50%;
-  object-fit: cover; background: @cream-4;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-family: 'Montserrat', sans-serif; font-weight: 700;
-  font-size: 10px; color: #2A0612;
-}
-.tsp-detail__name {
-  font-family: 'Montserrat', sans-serif; font-weight: 700;
-  font-size: 9px; letter-spacing: 0.18em;
-  color: @cream-2; text-transform: uppercase;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  max-width: 180px;
-}
-.tsp-detail__name--self { color: @pink; }
-.tsp-detail__ago {
-  font-family: 'Montserrat', sans-serif; font-weight: 700;
-  font-size: 8.5px; letter-spacing: 0.22em;
-  color: @cream-4; text-transform: uppercase;
-  flex-shrink: 0;
-}
-.tsp-detail__blind { color: @pink; opacity: 0.7; }
+
 .tsp-detail__like {
-  margin-top: 16px; width: 100%;
+  margin-top: 22px; width: 100%;
   display: inline-flex; align-items: center; justify-content: center; gap: 9px;
   background: transparent;
   border: 0.6px solid @line; border-radius: 9999px;
@@ -1018,8 +1016,6 @@
   -webkit-tap-highlight-color: transparent; touch-action: manipulation;
   transition: border-color 200ms ease, background 200ms ease;
   &.is-liked {
-    // Solid darker fill so the pill reads as opaque even on busy backdrops.
-    // Pink hue comes from border + text + glyph, not bg alpha.
     border-color: @pink-q;
     background: rgba(60, 14, 28, 0.92);
     box-shadow: 0 0 18px rgba(245, 177, 199, 0.18);
@@ -1061,18 +1057,22 @@
     background: rgba(244, 232, 208, 0.04);
   }
 }
+// Discard: borderless ghost text link. Same two-tap confirm, but visual
+// weight finally matches "destructive minority action" — not equal to
+// Save. Confirming state flashes pink as warning without a box around it.
 .tsp-detail__discard {
-  margin-top: 12px; width: 100%;
+  margin-top: 18px;
+  align-self: center;
   font-family: 'Montserrat', sans-serif; font-weight: 700;
-  font-size: 9px; letter-spacing: 0.34em;
+  font-size: 8px; letter-spacing: 0.32em;
   text-transform: uppercase;
-  background: transparent; color: @cream-3;
-  border: 0.6px solid @line; border-radius: 9999px;
-  padding: 11px 0; cursor: pointer;
+  background: transparent; color: @cream-4;
+  border: none; padding: 4px 8px; cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: color 160ms ease, border-color 160ms ease;
+  transition: color 160ms ease;
+  &:active { color: @cream-3; }
   &.is-confirming {
-    color: #E8607F; border-color: #E8607F;
+    color: #E8607F; letter-spacing: 0.34em;
   }
 }
 
