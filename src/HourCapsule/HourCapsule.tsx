@@ -221,6 +221,9 @@ export default function HourCapsule() {
         imageUrl: result.imageUrl,
         serial,
         rarity: picked.rarity,
+        // Freeze the curator's reading list with the capsule. Cap at 8 so
+        // the per-user save doesn't bloat over hundreds of capsules.
+        worldEvents: worldEvents.slice(0, 8),
       };
       setActiveCapsule(capsule);
       setPhase('reveal');

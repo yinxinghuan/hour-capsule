@@ -76,6 +76,28 @@ export default function SealDetail({ capsule, author, like, onToggleLike, onClos
           )}
         </div>
 
+        {/* Historical context: world headlines the curator was reading
+            when this capsule was sealed. Frozen at collect time so the
+            page-feeling persists forever. */}
+        {capsule.worldEvents && capsule.worldEvents.length > 0 && (
+          <div className="tsp-detail__wire">
+            <div className="tsp-detail__wire-eyebrow">from the wire at sealing time</div>
+            <ul className="tsp-detail__wire-list">
+              {capsule.worldEvents.map((line, i) => {
+                const m = line.match(/^(HN|World|Featured):\s*(.+)$/);
+                const tag = m ? m[1] : '';
+                const body = m ? m[2] : line;
+                return (
+                  <li key={i} className="tsp-detail__wire-row">
+                    {tag && <span className="tsp-detail__wire-tag">{tag}</span>}
+                    <span className="tsp-detail__wire-body">{body}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+
         <div className="tsp-detail__foot">
           {author && !author.isSelf ? (
             <button

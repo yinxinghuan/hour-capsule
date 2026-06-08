@@ -18,6 +18,11 @@ export interface Capsule {
   imageUrl: string;
   serial: number;       // per-user lifetime sequence — printed as #N stamp
   rarity?: Rarity;      // optional — older capsules may not have it (treated as 'common')
+  /** World headlines fetched at seal time (HN: / World: / Featured: prefixed).
+   *  Frozen with the capsule so the detail view can show the historical
+   *  reading context the curator was sealing under. Older capsules don't
+   *  have it (empty / undefined → section just doesn't render). */
+  worldEvents?: string[];
 }
 
 export interface CapsuleSave {
