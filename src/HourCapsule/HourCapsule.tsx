@@ -311,7 +311,33 @@ export default function HourCapsule() {
     const nextSave: CapsuleSave = { ...mirror, likes: nextLikes };
     setMirror(nextSave);
     persist(nextSave);
-    if (!liked) events.trigger(`like:${capsuleId}`);
+    if (!liked) {
+      // Attach a platform notify action to the like event when liking
+      // someone else's capsule. Same record/play call handles both the
+      // count and the fan-out notification.
+      const entry = fieldEntries.find(e => e.capsule.id === capsuleId);
+      const selfId = telegramId || 'self';
+      const isOther = !!entry && !!entry.userId && entry.userId !== selfId;
+      const config = (isOther && entry.capsule.imageUrl)
+        ? {
+            actions: [
+              {
+                type: 'notify',
+                target_user_id: entry.userId,
+                image: {
+                  ref_url: entry.capsule.imageUrl,
+                  prompt: 'vacuum-sealed hour capsule, MFG stamp',
+                },
+                message: {
+                  template: '{sender_name} liked your hour capsule.',
+                  variables: ['sender_name'],
+                },
+              },
+            ],
+          }
+        : undefined;
+      events.trigger(`like:${capsuleId}`, config);
+    }
     setTimeout(() => field.refresh(), 1500);
   };
 

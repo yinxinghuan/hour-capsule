@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hour Capsule — Demo Mode 评审</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ground: #0A0508;
+    --line:   rgba(244,232,208,0.16);
+    --line-d: rgba(244,232,208,0.07);
+    --pink:   #F5B1C7;
+    --cream:  #F4E8D0;
+    --cream-2: rgba(244,232,208,0.62);
+    --cream-3: rgba(244,232,208,0.38);
+    --cream-4: rgba(244,232,208,0.20);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #14171c;
+    color: #C8CED6;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  body { padding: 40px 28px 80px; }
+  h1 {
+    margin: 0 0 8px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-weight: 500; font-size: 34px;
+    color: #F1F3F6;
+  }
+  .lead {
+    margin: 0 0 40px;
+    font-size: 14px; line-height: 1.6;
+    color: #8A93A0;
+    max-width: 760px;
+  }
+  .lead code {
+    background: #1F242C; padding: 1px 6px; border-radius: 3px;
+    font-size: 12.5px; color: #E6E8EE;
+  }
+  .section {
+    margin-bottom: 56px;
+  }
+  .section-hd {
+    display: flex; align-items: baseline; gap: 14px;
+    margin-bottom: 6px;
+  }
+  .section-tag {
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 10px; letter-spacing: 0.32em;
+    color: #4FBFA1; text-transform: uppercase;
+  }
+  .section-title {
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-weight: 500; font-size: 22px;
+    color: #F1F3F6;
+  }
+  .section-note {
+    margin: 0 0 18px;
+    font-size: 13px; line-height: 1.55; color: #8A93A0;
+    max-width: 760px;
+  }
+  .row {
+    display: flex; flex-wrap: wrap; gap: 28px;
+    align-items: flex-start;
+  }
+  .phone-wrap {
+    flex: 0 0 auto;
+  }
+  .phone-label {
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 9px; letter-spacing: 0.3em;
+    color: #6A7280; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .phone {
+    width: 350px; height: 758px;
+    border-radius: 36px;
+    overflow: hidden;
+    position: relative;
+    background: var(--ground);
+    box-shadow:
+      0 0 0 8px #2a2f37,
+      0 0 0 9px #1c2028,
+      0 30px 60px rgba(0,0,0,0.6);
+  }
+  .phone-screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* iOS-ish status bar */
+  .ios-bar {
+    height: 36px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 4px 24px 0;
+    font-family: 'Inter', system-ui, sans-serif; font-weight: 600;
+    font-size: 13px; color: var(--cream);
+  }
+  .ios-bar__r { display: flex; gap: 6px; align-items: center; }
+  .ios-bar__sig::before { content: '••••'; letter-spacing: 1px; }
+
+  /* TopBar */
+  .topbar {
+    height: 50px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 22px;
+    border-bottom: 0.5px solid var(--line-d);
+  }
+  .topbar__brand {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 17px; color: var(--cream);
+  }
+  .topbar__brand-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--cream-4); color: #2A0612;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 8px;
+  }
+  .topbar__now {
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 8.5px; letter-spacing: 0.34em;
+    color: var(--cream-3); text-transform: uppercase;
+  }
+
+  /* TabBar */
+  .tabbar {
+    height: 88px;
+    display: flex; align-items: stretch; justify-content: space-between;
+    padding: 12px 22px 22px;
+    border-top: 0.5px solid var(--line-d);
+    gap: 12px;
+  }
+  .tabbar__tab {
+    flex: 0 0 56px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 9px; letter-spacing: 0.28em;
+    color: var(--cream-3); text-transform: uppercase;
+  }
+  .tabbar__tab.active { color: var(--cream); }
+  .tabbar__cta {
+    flex: 1 1 auto;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 11px; letter-spacing: 0.32em;
+    color: var(--cream); text-transform: uppercase;
+    border: 0.6px solid var(--cream-2); border-radius: 9999px;
+    background: transparent;
+  }
+  .tabbar__cta--ready {
+    color: #2A0612; background: var(--pink); border-color: var(--pink);
+  }
+
+  /* Demo content */
+  .tsp-demo {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 12px 22px 24px;
+    display: flex; flex-direction: column;
+  }
+  .tsp-demo__hd {
+    padding-top: 6px;
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .tsp-demo__title {
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-weight: 400; font-size: 30px; color: var(--cream);
+    line-height: 1;
+  }
+  .tsp-demo__count {
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 9px; letter-spacing: 0.4em;
+    color: var(--pink); text-transform: uppercase;
+  }
+  .tsp-demo__sub {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 13px; color: var(--cream-3);
+    margin-bottom: 14px;
+  }
+  .tsp-demo__rule {
+    height: 0; border-top: 0.5px solid var(--line-d);
+    margin-bottom: 20px;
+  }
+  .tsp-demo__hero {
+    position: relative;
+    width: calc(100% + 44px);
+    margin: 0 -22px 20px;
+    aspect-ratio: 1 / 1;
+    background: #000;
+    border: none; padding: 0;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+  }
+  .tsp-demo__hero img {
+    display: block; width: 100%; height: 100%; object-fit: cover;
+  }
+  .tsp-demo__hero-tag {
+    position: absolute; top: 12px; left: 12px;
+    padding: 4px 8px;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 7.5px; letter-spacing: 0.32em;
+    color: var(--cream-2); text-transform: uppercase;
+    background: rgba(10,5,8,0.55);
+    backdrop-filter: blur(4px);
+  }
+  .tsp-demo__pitch {
+    margin: 0 0 22px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 15.5px; line-height: 1.5; color: var(--cream-2);
+    text-align: center;
+  }
+  .tsp-demo__pitch p { margin: 10px 0 0; }
+  .tsp-demo__counter {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 22px; line-height: 1.25; color: var(--cream);
+  }
+  .tsp-demo__counter span {
+    display: block;
+    font-size: 13.5px; color: var(--cream-3);
+    margin-top: 2px;
+  }
+  .tsp-demo__cta {
+    display: block; width: 100%;
+    text-align: center;
+    padding: 16px 18px;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 11px; letter-spacing: 0.34em;
+    color: #2A0612; text-transform: uppercase;
+    background: var(--pink);
+    border: none; border-radius: 9999px;
+    text-decoration: none;
+    box-shadow: 0 0 24px rgba(245,177,199,0.22);
+  }
+  .tsp-demo__cta-sub {
+    margin-top: 10px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 12px; color: var(--cream-4);
+    text-align: center;
+  }
+  .tsp-demo__strip-eyebrow {
+    margin-top: 32px; margin-bottom: 12px;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 8px; letter-spacing: 0.4em;
+    color: var(--cream-4); text-transform: uppercase;
+    text-align: center;
+  }
+  .tsp-demo__strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .tsp-demo__strip-cell {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: #000;
+    overflow: hidden;
+    opacity: 0.7;
+  }
+  .tsp-demo__strip-cell img { display:block; width:100%; height:100%; object-fit: cover; }
+
+  /* Sample hero (first-time visitor) — the official poster as a teaser */
+  .tsp-demo__hero--sample { cursor: default; }
+  .tsp-demo__hero-tag--sample {
+    color: var(--pink);
+    border: 0.5px solid rgba(245,177,199,0.4);
+  }
+
+  /* In-AlterU reference Field */
+  .tsp-field {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 12px 22px 24px;
+  }
+  .tsp-field__hd {
+    padding-top: 6px;
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .tsp-field__title {
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-weight: 400; font-size: 30px; color: var(--cream);
+    line-height: 1;
+  }
+  .tsp-field__count {
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 9px; letter-spacing: 0.4em;
+    color: var(--pink); text-transform: uppercase;
+  }
+  .tsp-field__sub {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 13px; color: var(--cream-3);
+    margin-bottom: 14px;
+  }
+  .tsp-field__rule {
+    height: 0; border-top: 0.5px solid var(--line-d);
+    margin-bottom: 18px;
+  }
+  .field-card {
+    margin-bottom: 30px;
+  }
+  .field-card__chip {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 10px;
+  }
+  .field-card__avatar {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--cream-4); color: #2A0612;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 10px;
+  }
+  .field-card__name {
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 9px; letter-spacing: 0.22em;
+    color: var(--cream-2); text-transform: uppercase;
+  }
+  .field-card__ago {
+    margin-left: auto;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 8.5px; letter-spacing: 0.22em;
+    color: var(--cream-4); text-transform: uppercase;
+  }
+  .field-card__img {
+    width: 100%; aspect-ratio: 1/1;
+    background: #000; overflow: hidden;
+  }
+  .field-card__img img { display:block; width:100%; height:100%; object-fit:cover; }
+  .field-card__cap {
+    margin-top: 12px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 14px; color: var(--cream-2);
+  }
+  .field-card__like {
+    margin-top: 10px;
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 9px; letter-spacing: 0.22em;
+    color: var(--cream-3); text-transform: uppercase;
+  }
+
+  /* Annotation */
+  .anno {
+    flex: 1 1 320px;
+    max-width: 380px;
+    padding: 16px 18px;
+    background: #1A1E25;
+    border-left: 2px solid #4FBFA1;
+    border-radius: 4px;
+    font-size: 13px; line-height: 1.65; color: #C8CED6;
+  }
+  .anno strong { color: #E6E8EE; }
+  .anno code {
+    background: #2A2F38; padding: 1px 6px; border-radius: 3px;
+    font-size: 12px;
+  }
+  .anno ul { padding-left: 18px; margin: 8px 0 0; }
+  .anno li { margin-bottom: 4px; }
+  .anno .diff-add { color: #4FBFA1; }
+  .anno .diff-rem { color: #E8607F; text-decoration: line-through; opacity: 0.7; }
+</style>
+</head>
+<body>
+
+<h1>Hour Capsule — Demo Mode 评审</h1>
+<p class="lead">
+  分享链接被在外部浏览器（非 AlterU iframe）打开时的降级页面。
+  判定条件：URL 缺少 <code>api_origin</code> + <code>telegram_id</code> 这两个 query param → <code>isInAigram === false</code>。
+  Field tab 替换成 <code>FieldDemoCTA</code> 组件。
+  <strong>核心玩法仍可用</strong>（gen-image + LLM 都是 CORS <code>*</code> 直 fetch，已实测）：
+  Collect 按钮真出袋、Reveal 动画真播、Detail 真开、Altar tab 真存 localStorage。
+  只有 <strong>Field 跨用户墙</strong> 和 <strong>profile 头像</strong> 在外部废掉。
+</p>
+
+<!-- ───────────────────────────────────────────────────────────── -->
+<div class="section">
+  <div class="section-hd">
+    <span class="section-tag">STATE 1</span>
+    <h2 class="section-title">First-time visitor — 还没装过袋</h2>
+  </div>
+  <p class="section-note">
+    分享链接的最常见落点：一个完全不知道 AlterU 是什么的人点进来。
+    没有 hero 胶囊（mirror.capsules 为空）就把游戏官方海报（pocket watch 真空袋）顶上来当"示例袋", 让来访者
+    <strong>先看到游戏的产出形态</strong>再决定是否点 Collect。
+    EXAMPLE tag 用粉色 + 边框, 跟 "YOUR LATEST" cream tag 区分开, 避免"我什么时候装的这个"的迷惑。
+  </p>
+  <div class="row">
+    <div class="phone-wrap">
+      <div class="phone-label">iPhone 14 Pro · safari · 非 AlterU 环境</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ios-bar"><span>15:46</span><span class="ios-bar__r"><span class="ios-bar__sig"></span><b>5G</b></span></div>
+          <div class="topbar">
+            <div class="topbar__brand"><span class="topbar__brand-dot">?</span>HOUR CAPSULE</div>
+            <div class="topbar__now">2026.06.08 · 15:46</div>
+          </div>
+          <div class="tsp-demo">
+            <div class="tsp-demo__hd">
+              <h2 class="tsp-demo__title">The Field</h2>
+              <span class="tsp-demo__count">PREVIEW</span>
+            </div>
+            <div class="tsp-demo__sub">tap Collect below to seal your first hour.</div>
+            <div class="tsp-demo__rule"></div>
+            <div class="tsp-demo__hero tsp-demo__hero--sample">
+              <img src="poster.png" alt="" />
+              <div class="tsp-demo__hero-tag tsp-demo__hero-tag--sample">EXAMPLE · YOURS STARTS IN A TAP</div>
+            </div>
+            <div class="tsp-demo__pitch">
+              <div class="tsp-demo__counter">
+                427<span>others sealed an hour with you today.</span>
+              </div>
+              <p>Hour Capsule is a tiny ritual inside AlterU: one bagged moment, every hour, picked by AI from what's happening in the world right now.</p>
+            </div>
+            <a class="tsp-demo__cta" href="#">Get AlterU on the App Store</a>
+            <div class="tsp-demo__cta-sub">the AI creative platform where this game lives · free on iPhone</div>
+          </div>
+          <div class="tabbar">
+            <div class="tabbar__tab active">FIELD</div>
+            <button class="tabbar__cta tabbar__cta--ready">COLLECT</button>
+            <div class="tabbar__tab">SHELF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <strong>核心信息层级</strong>
+      <ul>
+        <li>顶部 chip <code>PREVIEW</code> ≠ 全功能, 但不刺眼</li>
+        <li><strong>Sample hero</strong> 用 <code>public/poster.png</code>（官方海报）做示例 — 来访者立刻看到游戏的产出, 而不是抽象 "tap to start"</li>
+        <li>EXAMPLE 粉色 tag 跟真袋的 cream "YOUR LATEST" 区分</li>
+        <li>Counter 是<strong>幻数</strong>: 按小时 seed 累加, "things are happening behind the door"</li>
+        <li>CTA pink 满填充 = 整个游戏唯一一个填充按钮（其他都是 outlined pill）</li>
+        <li>CTA 下面一行解释 "what is AlterU"，多数分享接收者不知道这个品牌</li>
+        <li>底部 TabBar 完整可用: Collect 真出袋, Shelf 看本地存档</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────────────────────────── -->
+<div class="section">
+  <div class="section-hd">
+    <span class="section-tag">STATE 2</span>
+    <h2 class="section-title">收过一次袋 — hero 状态</h2>
+  </div>
+  <p class="section-note">
+    访客点了一次 Collect, 出了一个袋子。回到 Field 看到的就是 hero 化的"我刚做的那个"。
+    本身就是一个迷你 demo: 这个游戏到底产出什么、bag 美术质感如何, 用户已经亲眼看过了。
+    然后 CTA 文案换成 "see the rest of the field"，引导他到 AlterU 去看墙。
+  </p>
+  <div class="row">
+    <div class="phone-wrap">
+      <div class="phone-label">已 Collect 1 次</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ios-bar"><span>15:46</span><span class="ios-bar__r"><span class="ios-bar__sig"></span><b>5G</b></span></div>
+          <div class="topbar">
+            <div class="topbar__brand"><span class="topbar__brand-dot">?</span>HOUR CAPSULE</div>
+            <div class="topbar__now">2026.06.08 · 15:46</div>
+          </div>
+          <div class="tsp-demo">
+            <div class="tsp-demo__hd">
+              <h2 class="tsp-demo__title">The Field</h2>
+              <span class="tsp-demo__count">PREVIEW</span>
+            </div>
+            <div class="tsp-demo__sub">today's field lives inside the app.</div>
+            <div class="tsp-demo__rule"></div>
+            <div class="tsp-demo__hero">
+              <img src="poster.png" alt="latest" />
+              <div class="tsp-demo__hero-tag">YOUR LATEST</div>
+            </div>
+            <div class="tsp-demo__pitch">
+              <div class="tsp-demo__counter">
+                427<span>others sealed an hour with you today.</span>
+              </div>
+              <p>See the rest of the Field — every capsule sealed in the last hour, with likes, comments, and the curator who picked your subject.</p>
+            </div>
+            <a class="tsp-demo__cta" href="#">Get AlterU on the App Store</a>
+            <div class="tsp-demo__cta-sub">the AI creative platform where this game lives · free on iPhone</div>
+          </div>
+          <div class="tabbar">
+            <div class="tabbar__tab active">FIELD</div>
+            <button class="tabbar__cta">NEXT IN 47M</button>
+            <div class="tabbar__tab">SHELF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <strong>"hero 是我刚做的"</strong>
+      <ul>
+        <li>来访者已经完整走过 Collect → 真袋 → Reveal 流程, 这页就是"看一眼成品再来一发"</li>
+        <li>YOUR LATEST tag 在左上明示这是他自己的, 没装 "by @other" 防止他以为是别人的</li>
+        <li>点 hero 进 SealDetail (原页, hero crop + ghost discard 全套都在)</li>
+        <li>CTA 文案换成 "see the rest" —— pitch 变成 "你还想看吗"</li>
+        <li>底部 TabBar collect 进入冷却态显示 "NEXT IN 47M", 想再玩就更要装 app 了</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────────────────────────── -->
+<div class="section">
+  <div class="section-hd">
+    <span class="section-tag">STATE 3</span>
+    <h2 class="section-title">已收多个 — hero + 历史 strip</h2>
+  </div>
+  <p class="section-note">
+    如果这个浏览器同一个用户已经收过几个胶囊（localStorage 跨小时累积），
+    最新一个做 hero, 其他做底下 4 格 grid（fade 0.7 opacity, 暗示"次要"）。
+    Strip 让他点开浏览自己历史, 而 CTA 依然在中段, 占据"主行动位置"。
+  </p>
+  <div class="row">
+    <div class="phone-wrap">
+      <div class="phone-label">已收 5 次 (本地累积)</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ios-bar"><span>15:46</span><span class="ios-bar__r"><span class="ios-bar__sig"></span><b>5G</b></span></div>
+          <div class="topbar">
+            <div class="topbar__brand"><span class="topbar__brand-dot">?</span>HOUR CAPSULE</div>
+            <div class="topbar__now">2026.06.08 · 15:46</div>
+          </div>
+          <div class="tsp-demo">
+            <div class="tsp-demo__hd">
+              <h2 class="tsp-demo__title">The Field</h2>
+              <span class="tsp-demo__count">PREVIEW</span>
+            </div>
+            <div class="tsp-demo__sub">today's field lives inside the app.</div>
+            <div class="tsp-demo__rule"></div>
+            <div class="tsp-demo__hero">
+              <img src="poster.png" alt="latest" />
+              <div class="tsp-demo__hero-tag">YOUR LATEST</div>
+            </div>
+            <div class="tsp-demo__pitch">
+              <div class="tsp-demo__counter">
+                432<span>others sealed an hour with you today.</span>
+              </div>
+              <p>See the rest of the Field — every capsule sealed in the last hour, with likes, comments, and the curator who picked your subject.</p>
+            </div>
+            <a class="tsp-demo__cta" href="#">Get AlterU on the App Store</a>
+            <div class="tsp-demo__cta-sub">the AI creative platform where this game lives · free on iPhone</div>
+            <div class="tsp-demo__strip-eyebrow">— your other capsules —</div>
+            <div class="tsp-demo__strip">
+              <div class="tsp-demo__strip-cell"><img src="poster.png" alt=""/></div>
+              <div class="tsp-demo__strip-cell"><img src="poster.png" alt=""/></div>
+              <div class="tsp-demo__strip-cell"><img src="poster.png" alt=""/></div>
+              <div class="tsp-demo__strip-cell"><img src="poster.png" alt=""/></div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tabbar__tab active">FIELD</div>
+            <button class="tabbar__cta tabbar__cta--ready">COLLECT</button>
+            <div class="tabbar__tab">SHELF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <strong>"既然装不到, 我自己玩"</strong>
+      <ul>
+        <li>这是"回头客"路径: 同一个手机/浏览器多次打开链接, localStorage 累积了 5+ 个袋</li>
+        <li>Strip 4 格 opacity 0.7, 不抢 hero 风头, 点击放 1.0 + scale</li>
+        <li>这种用户已经形成习惯, CTA 反而成为"完整版本"的提示</li>
+        <li>需要决策: 是否把 strip 显示得更多 (5/10/20格), 还是保持 4 格 stripe 的节制感</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────────────────────────── -->
+<div class="section">
+  <div class="section-hd">
+    <span class="section-tag">REF</span>
+    <h2 class="section-title">对照: AlterU 内的 Field (现状, 不动)</h2>
+  </div>
+  <p class="section-note">
+    作为对比, 这是在 AlterU 内 iframe 打开时 Field tab 的样子, 一条真实跨用户 feed。
+    Demo 页设计明确<strong>不要</strong>模仿 feed 自身, 因为没有内容; 用 hero + CTA 的 "show, don't simulate" 思路, 不假装它是社交墙。
+  </p>
+  <div class="row">
+    <div class="phone-wrap">
+      <div class="phone-label">AlterU 内打开 · 正常 Field</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ios-bar"><span>15:46</span><span class="ios-bar__r"><span class="ios-bar__sig"></span><b>5G</b></span></div>
+          <div class="topbar">
+            <div class="topbar__brand">
+              <span class="topbar__brand-dot" style="background:#F5B1C7;color:#2A0612">A</span>HOUR CAPSULE
+            </div>
+            <div class="topbar__now">2026.06.08 · 15:46</div>
+          </div>
+          <div class="tsp-field">
+            <div class="tsp-field__hd">
+              <h2 class="tsp-field__title">The Field</h2>
+              <span class="tsp-field__count">432 CAPSULES</span>
+            </div>
+            <div class="tsp-field__sub">Every capsule sealed today — scroll the field.</div>
+            <div class="tsp-field__rule"></div>
+            <div class="field-card">
+              <div class="field-card__chip">
+                <span class="field-card__avatar">A</span>
+                <span class="field-card__name">@ALGRAM</span>
+                <span class="field-card__ago">2H AGO</span>
+              </div>
+              <div class="field-card__img"><img src="poster.png" alt=""/></div>
+              <div class="field-card__cap">torn vintage postcard of a European cityscape</div>
+              <div class="field-card__like">♥ 12 LIKES</div>
+            </div>
+            <div class="field-card">
+              <div class="field-card__chip">
+                <span class="field-card__avatar">J</span>
+                <span class="field-card__name">@JENNYW</span>
+                <span class="field-card__ago">3H AGO</span>
+              </div>
+              <div class="field-card__img"><img src="poster.png" alt=""/></div>
+              <div class="field-card__cap">a small ceramic tea bowl in afternoon sun</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tabbar__tab active">FIELD</div>
+            <button class="tabbar__cta tabbar__cta--ready">COLLECT</button>
+            <div class="tabbar__tab">SHELF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <strong>对照点</strong>
+      <ul>
+        <li>Field 的 count 是真数字 (432 CAPSULES), Demo 是 PREVIEW chip</li>
+        <li>Field 每张卡有 author chip + like count, 真社交</li>
+        <li>Demo 没有 author chip (因为只有"我"), CTA 取代了向下 scroll 的预期</li>
+        <li>视觉骨架一致 (title / sub / rule / 卡片宽度), 切换不突兀</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────────────────────────── -->
+<div class="section">
+  <div class="section-hd">
+    <span class="section-tag">UX 决策</span>
+    <h2 class="section-title">还在桌上的几个问题</h2>
+  </div>
+  <div class="anno" style="max-width:760px;border-left-color:#E8B14F;">
+    <strong>1. Detail 页的 Like 按钮</strong> — Demo 模式下 like count 永远 0（没有跨用户数据）。
+    保留 Like 按钮 = "看起来像正常游戏" 但 count 始终空；隐藏 = 更诚实, 少一个无效控件。
+    <em>当前实现: 保留</em>。<br/><br/>
+
+    <strong>2. CTA 的位置</strong> — 现在 CTA 在 hero + pitch 之后 (中段)。是否应该
+    <strong>悬浮在底部</strong> 永远可见 (类似 sticky bottom CTA)？争议点: TabBar 已占底部, sticky CTA 会和它打架; 中段 CTA 又不一定每个 viewport 都看见。
+    <em>当前实现: 中段</em>。<br/><br/>
+
+    <strong>3. Phantom counter</strong> — "427 others sealed today" 是按小时 seed 的假数字。
+    是否换成<strong>真数字</strong>? 可以加一个无认证的 <code>/aigram/api/today-count</code> 接口暴露聚合统计。或者干脆不写数字。
+    <em>当前实现: 假数字, 缓慢累加</em>。<br/><br/>
+
+    <strong>4. 多次 Collect 后的体验</strong> — 没 cap, 同一浏览器每小时可以无限收。
+    是否应该收 3 个后 hard-gate "下载 app 才能继续"? 反对: 用户体验越好越想下载; 支持: 强制下载也算转化。
+    <em>当前实现: 无 cap, 跟正常一样的 1/hour 冷却</em>。<br/><br/>
+
+    <strong>5. Aigram 旧字眼</strong> — 代码 / 文件名仍是 <code>isInAigram</code> / <code>api_origin</code> / <code>callAigramAPI</code> / <code>postAigramAPI</code> / <code>openAigramProfile</code>。
+    这是平台 runtime 接口的内部命名 (历史), 不影响用户。是否要重命名 (大改) 或就留着 (注释说明)?
+    <em>当前实现: 留着, FieldDemoCTA 注释里有说明</em>。
+  </div>
+</div>
+
+</body>
+</html>
