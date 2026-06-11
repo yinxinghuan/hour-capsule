@@ -1092,17 +1092,22 @@
   }
 }
 .tsp-detail__inscription {
-  margin-top: 20px;
+  margin-top: 24px;
   font-family: 'Cormorant Garamond', serif; font-style: italic;
-  font-size: 22px; line-height: 1.35; color: @cream;
+  font-size: 28px; line-height: 1.25; color: @cream;
   text-align: center;
+  // Subject is the hero title — pull it visually away from the byline
+  // and metadata below so the eye reads it as the main artifact name,
+  // then descends through the secondary lines.
+  letter-spacing: -0.005em;
 }
 
 // Byline: author chip (avatar + name) on its own slim centered line,
 // right under the subject. Replaces the bottom foot — cross-user "who"
 // is now the second thing readable after the artifact, not buried.
+// Margin pulled up to widen the hero subject's breathing room.
 .tsp-detail__byline {
-  margin-top: 14px;
+  margin-top: 20px;
   display: flex; justify-content: center;
 }
 .tsp-detail__author {
