@@ -1134,12 +1134,43 @@
   text-align: center;
 }
 
+// Today's anchor — the single headline event the picker chose, shown as
+// a louder eyebrow + bigger italic body above the wire list. Bridges the
+// news and the object so the player reads "this capsule is about X today".
+.tsp-detail__anchor {
+  margin-top: 24px;
+  width: 100%;
+  padding-top: 16px; border-top: 0.5px solid @line-d;
+  text-align: center;
+}
+.tsp-detail__anchor-eyebrow {
+  display: block;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 8px; letter-spacing: 0.36em;
+  color: @pink; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.tsp-detail__anchor-body {
+  display: block;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 17px; line-height: 1.35;
+  color: @cream;
+  padding: 0 8px;
+}
+
 // Frozen-at-seal-time world headlines. Eyebrow + clean italic list, no
 // box, no film, no rotation — the quiet typography is the artifact-feel.
+// When the anchor row above is present, drop the top border + spacing
+// since the anchor already provides the separator.
 .tsp-detail__wire {
   margin-top: 24px;
   width: 100%;
   padding-top: 16px; border-top: 0.5px solid @line-d;
+}
+.tsp-detail__anchor + .tsp-detail__wire {
+  margin-top: 18px;
+  padding-top: 0;
+  border-top: none;
 }
 .tsp-detail__wire-eyebrow {
   font-family: 'Montserrat', sans-serif; font-weight: 700;

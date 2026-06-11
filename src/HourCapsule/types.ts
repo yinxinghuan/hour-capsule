@@ -23,6 +23,14 @@ export interface Capsule {
    *  reading context the curator was sealing under. Older capsules don't
    *  have it (empty / undefined → section just doesn't render). */
   worldEvents?: string[];
+  /** 4-10 word English phrase naming the single headline event this
+   *  capsule's subject was chosen FROM. Set when the LLM picker selected
+   *  a wire-anchored object; null when the wire was empty and the picker
+   *  fell back to a fresh non-default object. SealDetail surfaces it
+   *  above the wire list as "today · {anchor}" — the bridge between
+   *  the headline and the object. Older capsules without it just skip
+   *  the row. */
+  anchor?: string | null;
 }
 
 export interface CapsuleSave {

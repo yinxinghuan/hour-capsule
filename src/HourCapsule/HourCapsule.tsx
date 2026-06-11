@@ -194,7 +194,7 @@ export default function HourCapsule() {
       const picked = pickDomain(mirror.recentDomains ?? []);
       setSealingDomain(picked.phrase);
 
-      const subject = await pickSubject({
+      const { anchor, subject } = await pickSubject({
         domainHint: picked.phrase,
         worldNudge: worldNudge(),
         worldEvents,
@@ -235,6 +235,10 @@ export default function HourCapsule() {
         // Freeze the curator's reading list with the capsule. Cap at 8 so
         // the per-user save doesn't bloat over hundreds of capsules.
         worldEvents: worldEvents.slice(0, 8),
+        // The single headline event the picker anchored on. Null when the
+        // wire was empty and the picker fell back to a fresh non-default
+        // object. SealDetail shows it above the wire list.
+        anchor,
       };
       setActiveCapsule(capsule);
       setPhase('reveal');

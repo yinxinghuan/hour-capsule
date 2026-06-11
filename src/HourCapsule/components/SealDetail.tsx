@@ -101,6 +101,17 @@ export default function SealDetail({ capsule, author, like, onToggleLike, onClos
           )}
         </div>
 
+        {/* Today's anchor — the single headline event the picker chose to
+            represent. Bridges the wire list and the object. Shows only when
+            the picker actually anchored on a headline (skipped on empty-wire
+            fallback). Sits above the wire list as a louder eyebrow. */}
+        {capsule.anchor && (
+          <div className="tsp-detail__anchor">
+            <span className="tsp-detail__anchor-eyebrow">— today ·</span>
+            <span className="tsp-detail__anchor-body">{capsule.anchor}</span>
+          </div>
+        )}
+
         {/* Frozen-at-seal-time world headlines. Clean italic ledger —
             no boxes, no rotation, no film overlay. The quiet typography
             is the artifact-feel, not the decoration. */}
