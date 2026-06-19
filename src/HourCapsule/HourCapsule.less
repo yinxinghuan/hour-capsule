@@ -159,6 +159,25 @@
   display: flex; flex-direction: column;
   gap: 38px;
 }
+.tsp-field__end {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; text-align: center;
+  padding: 46px 24px 6px;
+}
+.tsp-field__end-mark {
+  color: @pink; opacity: 0.75;
+  font-size: 12px; letter-spacing: 0.4em;
+}
+.tsp-field__end-note {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 20px; color: @cream-2;
+}
+.tsp-field__end-sub {
+  margin: 0; max-width: 250px;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 13px; line-height: 1.5; color: @cream-3;
+}
 
 // ─── Field (outside-AlterU demo CTA) ──────────────────────────────
 // Replaces .tsp-field when isInAigram=false. Borrows the same gutter

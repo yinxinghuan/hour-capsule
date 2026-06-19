@@ -110,6 +110,15 @@ export default function Field({ entries, loaded, likeInfo, onToggleLike, selfUse
               />
             ))}
           </div>
+
+          <div className="tsp-field__end">
+            <span className="tsp-field__end-mark">✦</span>
+            <p className="tsp-field__end-note">You're all caught up.</p>
+            <p className="tsp-field__end-sub">
+              The field keeps the latest capsules from recent collectors. Fresh
+              ones seal in at the top each hour.
+            </p>
+          </div>
         </>
       )}
     </div>
