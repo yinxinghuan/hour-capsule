@@ -140,7 +140,12 @@ export function useField(): UseFieldResult {
         }),
       );
     } catch {
-      setServerEntries([]);
+      // Keep whatever is already on screen. A transient fetch error here
+      // (the refresh fires 1.5s after every like/seal/delete) must NOT
+      // wipe a populated feed: blanking it collapses the list shorter than
+      // the viewport, the browser clamps scrollTop to 0, and the user is
+      // yanked back to the first capsule after scrolling deep. Stale data
+      // beats an empty wall.
     } finally {
       setLoaded(true);
     }
