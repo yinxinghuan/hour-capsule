@@ -79,7 +79,11 @@ export function useField(): UseFieldResult {
 
   const refresh = async () => {
     if (!sessionId) { setServerEntries([]); setLikesByCapsule(new Map()); setLoaded(true); return; }
-    setLoaded(false);
+    // Do NOT blank the feed on re-fetch. `loaded` only gates the very first
+    // paint ("opening the field…"); once true it stays true so that the
+    // refreshes fired after every like/seal/delete swap data in place
+    // (cards keyed by capsule.id, stable <img src> → React reconciles in
+    // place, no reload) instead of flashing the whole list empty.
     try {
       const res = await callAigramAPI<AigramResponse<SaveRow[]>>(
         `/note/aigram/ai/game/get/data/list?session_id=${encodeURIComponent(sessionId)}`,
