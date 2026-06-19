@@ -95,7 +95,7 @@ export default function Field({ entries, loaded, likeInfo, onToggleLike, selfUse
             <h2 className="tsp-field__title">The Field</h2>
             <div className="tsp-field__count">{entries.length} CAPSULES</div>
           </div>
-          <div className="tsp-field__sub">Every capsule sealed today — scroll the field.</div>
+          <div className="tsp-field__sub">The latest capsules from across the field.</div>
           <div className="tsp-field__rule" />
 
           <div className="tsp-field__feed">
