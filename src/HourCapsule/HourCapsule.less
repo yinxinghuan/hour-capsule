@@ -100,6 +100,12 @@
 .tsp-field {
   flex: 1 1 auto;
   overflow-y: auto;
+  // Keep the scroll gesture inside the feed. The game is one screen in the
+  // platform's vertical scroll-feed; without this, flicking the feed chains
+  // to the host feed, which can re-layout / remount this screen and dump the
+  // user back at the first capsule.
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 12px 22px 120px;
 }
 .tsp-field--empty {

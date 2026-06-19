@@ -8,7 +8,7 @@
 //   · cross-user-avatar: every cross-user surface shows avatar + name.
 //   · cross-user-profile-tap: avatar+name opens the user's profile.
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { openAigramProfile, isInAigram } from '@shared/runtime/bridge';
 import { relativeAgo } from '../utils/day';
 import { playLike, playUnlike, hapticTap } from '../utils/sound';
@@ -25,43 +25,93 @@ interface Props {
   onOpen: (entry: FieldEntry) => void;
 }
 
-export default function Field({ entries, loaded, likeInfo, onToggleLike, selfUserId, onOpen }: Props) {
-  if (!loaded) {
-    return (
-      <div className="tsp-field tsp-field--empty">
-        <em>opening the field…</em>
-      </div>
-    );
-  }
-  if (entries.length === 0) {
-    return (
-      <div className="tsp-field tsp-field--empty">
-        <h3>The field is quiet this hour.</h3>
-        <p>Collect the first capsule — it appears here for everyone.</p>
-      </div>
-    );
-  }
-  return (
-    <div className="tsp-field">
-      <div className="tsp-field__hd">
-        <h2 className="tsp-field__title">The Field</h2>
-        <div className="tsp-field__count">{entries.length} CAPSULES</div>
-      </div>
-      <div className="tsp-field__sub">Every capsule sealed today — scroll the field.</div>
-      <div className="tsp-field__rule" />
+// Persist the feed scroll position so a platform-driven remount of the game
+// iframe (the game is one screen in the host's vertical scroll-feed) doesn't
+// dump the user back at the first capsule. localStorage + a freshness window
+// survives a full iframe re-create; stale positions (returning much later) are
+// ignored so the user still lands at the top on a genuinely new session.
+const SCROLL_KEY = 'hc_field_scroll';
+const SCROLL_FRESH_MS = 5 * 60 * 1000;
 
-      <div className="tsp-field__feed">
-        {entries.map((entry) => (
-          <FieldCard
-            key={entry.capsule.id}
-            entry={entry}
-            isSelf={entry.userId === selfUserId}
-            like={likeInfo.get(entry.capsule.id) ?? { count: 0, liked: false }}
-            onLike={() => onToggleLike(entry.capsule.id)}
-            onOpen={() => onOpen(entry)}
-          />
-        ))}
-      </div>
+function saveScroll(top: number) {
+  try { localStorage.setItem(SCROLL_KEY, JSON.stringify({ top, ts: Date.now() })); } catch { /* ignore */ }
+}
+function readScroll(): number {
+  try {
+    const raw = localStorage.getItem(SCROLL_KEY);
+    if (!raw) return 0;
+    const { top, ts } = JSON.parse(raw) as { top: number; ts: number };
+    if (!top || Date.now() - ts > SCROLL_FRESH_MS) return 0;
+    return top;
+  } catch { return 0; }
+}
+
+export default function Field({ entries, loaded, likeInfo, onToggleLike, selfUserId, onOpen }: Props) {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const restoredRef = useRef(false);
+  const rafRef = useRef<number | null>(null);
+
+  // Restore the saved position once, after the feed has real content. Cards
+  // carry a fixed aspect-ratio image box, so scrollHeight is correct the
+  // moment they mount — no need to wait for images to decode. useLayoutEffect
+  // sets scrollTop before paint, so there's no visible jump.
+  useLayoutEffect(() => {
+    if (restoredRef.current || !loaded || entries.length === 0) return;
+    const el = scrollerRef.current;
+    if (!el) return;
+    const saved = readScroll();
+    if (saved > 0) el.scrollTop = saved;
+    restoredRef.current = true;
+  }, [loaded, entries.length]);
+
+  useEffect(() => () => { if (rafRef.current != null) cancelAnimationFrame(rafRef.current); }, []);
+
+  const handleScroll = () => {
+    if (rafRef.current != null) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      const el = scrollerRef.current;
+      if (el) saveScroll(el.scrollTop);
+    });
+  };
+
+  const empty = !loaded || entries.length === 0;
+  return (
+    <div
+      ref={scrollerRef}
+      onScroll={handleScroll}
+      className={`tsp-field${empty ? ' tsp-field--empty' : ''}`}
+    >
+      {!loaded ? (
+        <em>opening the field…</em>
+      ) : entries.length === 0 ? (
+        <>
+          <h3>The field is quiet this hour.</h3>
+          <p>Collect the first capsule — it appears here for everyone.</p>
+        </>
+      ) : (
+        <>
+          <div className="tsp-field__hd">
+            <h2 className="tsp-field__title">The Field</h2>
+            <div className="tsp-field__count">{entries.length} CAPSULES</div>
+          </div>
+          <div className="tsp-field__sub">Every capsule sealed today — scroll the field.</div>
+          <div className="tsp-field__rule" />
+
+          <div className="tsp-field__feed">
+            {entries.map((entry) => (
+              <FieldCard
+                key={entry.capsule.id}
+                entry={entry}
+                isSelf={entry.userId === selfUserId}
+                like={likeInfo.get(entry.capsule.id) ?? { count: 0, liked: false }}
+                onLike={() => onToggleLike(entry.capsule.id)}
+                onOpen={() => onOpen(entry)}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
