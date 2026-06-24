@@ -123,23 +123,40 @@ export function threadFor(
   return [...seen.values()].sort((a, b) => a.ts - b.ts);
 }
 
+/** Sanitize + clamp a note for safe inlining into a notification template.
+ *  Strips braces (so user text can't collide with the platform's {variable}
+ *  substitution), collapses whitespace, truncates with an ellipsis. */
+export function notePreview(text: string, max = 60): string {
+  const clean = (text || '').replace(/[{}]/g, '').replace(/\s+/g, ' ').trim();
+  return clean.length > max ? clean.slice(0, max).trimEnd() + '…' : clean;
+}
+
 /** The platform event `config_json` that pings an artifact's author. Mirrors
- *  the shape the game's notify actions already use ({sender_name}-only
- *  template; the note text itself stays in the in-game thread). `template` /
- *  `imagePrompt` are overridable so each game keeps its own voice. */
+ *  the shape the game's notify actions already use. The platform only resolves
+ *  a fixed variable whitelist ({sender_name}, {count}), but `template` is a
+ *  free client string, so when `note` is supplied the note's own (sanitized,
+ *  truncated) text rides into the push as "{sender_name}: <preview>". Verified
+ *  shape: shipped games already inline dynamic text into `template`
+ *  (block-party score, pebble-pocket item). `template` / `imagePrompt` are
+ *  overridable so each game keeps its own voice for the no-note fallback. */
 export function guestbookNotifyConfig(opts: {
   toUserId: string;
   refUrl?: string;
   template?: string;
   imagePrompt?: string;
+  /** Raw note text. When non-empty it's previewed into the push body. */
+  note?: string;
+  /** Preview character budget (default 60 — short enough to dodge OS truncation). */
+  notePreviewLen?: number;
 }): object {
+  const preview = opts.note != null ? notePreview(opts.note, opts.notePreviewLen ?? 60) : '';
+  const template = preview
+    ? '{sender_name}: ' + preview
+    : opts.template || '{sender_name} left you a note';
   const action: Record<string, unknown> = {
     type: 'notify',
     target_user_id: opts.toUserId,
-    message: {
-      template: opts.template || '{sender_name} left you a note',
-      variables: ['sender_name'],
-    },
+    message: { template, variables: ['sender_name'] },
   };
   if (opts.refUrl) {
     action.image = {

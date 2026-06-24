@@ -372,6 +372,7 @@ export default function HourCapsule() {
         guestbookNotifyConfig({
           toUserId: authorId,
           refUrl: imageUrl,
+          note: text,
           template: '{sender_name} left a note on your capsule.',
           imagePrompt: 'vacuum-sealed hour capsule, MFG stamp',
         }),
