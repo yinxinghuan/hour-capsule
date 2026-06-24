@@ -1,7 +1,13 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGameSave } from '@shared/save';
 import { useGameEvent } from '@shared/runtime';
 import { telegramId, isInAigram } from '@shared/runtime/bridge';
+import {
+  appendMessage,
+  guestbookNotifyConfig,
+  newMessage,
+  threadFor,
+} from '@shared/social/guestbook';
 import TopBar from './components/TopBar';
 import TabBar, { type Tab } from './components/TabBar';
 import Field from './components/Field';
@@ -51,6 +57,7 @@ export default function HourCapsule() {
         recentDomains: savedData?.recentDomains ?? [],
         streak: savedData?.streak ?? 0,
         onboarded: savedData?.onboarded ?? false,
+        messages: savedData?.messages ?? [],
       });
     }
   }, [savedData, mirror]);
@@ -345,6 +352,34 @@ export default function HourCapsule() {
     setTimeout(() => field.refresh(), 1500);
   };
 
+  // Leave a public note on a capsule: store it in my OWN blob (the field
+  // guestbook aggregates everyone's) and ping the author once — never self
+  // or a capsule I've already pinged.
+  const msgNotified = useRef<Set<string>>(new Set());
+  const handleSendNote = (capsuleId: string, authorId: string | undefined, imageUrl: string, text: string) => {
+    if (!mirror) return;
+    const msg = newMessage(capsuleId, authorId, text);
+    if (!msg) return;
+    const nextSave = appendMessage(mirror, msg);
+    setMirror(nextSave);
+    persist(nextSave);
+
+    const selfId = telegramId || 'self';
+    if (authorId && authorId !== selfId && !msgNotified.current.has(capsuleId)) {
+      msgNotified.current.add(capsuleId);
+      events.trigger(
+        `note:${capsuleId}`,
+        guestbookNotifyConfig({
+          toUserId: authorId,
+          refUrl: imageUrl,
+          template: '{sender_name} left a note on your capsule.',
+          imagePrompt: 'vacuum-sealed hour capsule, MFG stamp',
+        }),
+      );
+    }
+    setTimeout(() => field.refresh(), 1500);
+  };
+
   const handleTab = (t: Tab) => {
     setPhase(t === 'field' ? 'field' : 'altar');
   };
@@ -439,7 +474,17 @@ export default function HourCapsule() {
           capsule={detail.capsule}
           author={detail.author}
           like={likeInfo.get(detail.capsule.id) ?? { count: 0, liked: false }}
+          thread={threadFor(
+            detail.capsule.id,
+            field.messagesByCapsule,
+            mirror.messages,
+            telegramId ?? undefined,
+          )}
+          selfUserId={telegramId || undefined}
           onToggleLike={() => handleToggleLike(detail.capsule.id)}
+          onSendNote={(text) =>
+            handleSendNote(detail.capsule.id, detail.author?.userId, detail.capsule.imageUrl, text)
+          }
           onClose={() => setDetail(null)}
           onDelete={handleDeleteCapsule}
         />

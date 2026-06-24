@@ -2,6 +2,8 @@
 // at collect time. Image is gen'd with the v8 prompt, baking subject
 // + real MFG timestamp + owner stamp into the picture.
 
+import type { GuestMessage } from '@shared/social/guestbook';
+
 export type Phase =
   | 'field'      // landing tab — public wall
   | 'sealing'    // gen-image in flight
@@ -49,6 +51,9 @@ export interface CapsuleSave {
    *  GRACE_MS after the cooldown ended; resets to 1 if missed longer. */
   streak?: number;
   onboarded?: boolean;
+  /** Public notes I've left on capsules (stored in my own blob; the field
+   *  guestbook aggregates everyone's). See @shared/social/guestbook. */
+  messages?: GuestMessage[];
 }
 
 /** Streak grace period — once the 1h cooldown ends, the player has this

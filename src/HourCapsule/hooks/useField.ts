@@ -12,6 +12,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { callAigramAPI, type AigramResponse } from '@shared/runtime/bridge';
 import { getGameUuid } from '@shared/runtime/game-id';
+import { messagesByTarget, type GuestMessage } from '@shared/social/guestbook';
 import type { Capsule, CapsuleSave } from '../types';
 
 interface SaveRow {
@@ -38,6 +39,9 @@ interface UseFieldResult {
    *  users. The caller folds in their OWN likes (this read may exclude
    *  the caller's save, same as the wall itself). */
   likesByCapsule: Map<string, Set<string>>;
+  /** capsuleId → public notes left on it, aggregated across returned users
+   *  (best-effort, same read window). Note authors carry resolved profiles. */
+  messagesByCapsule: Map<string, GuestMessage[]>;
   loaded: boolean;
   refresh: () => Promise<void>;
   /** Optimistically show a just-collected capsule in the feed immediately,
@@ -53,6 +57,7 @@ export function useField(): UseFieldResult {
   const [serverEntries, setServerEntries] = useState<FieldEntry[]>([]);
   const [localEntries, setLocalEntries] = useState<FieldEntry[]>([]);
   const [likesByCapsule, setLikesByCapsule] = useState<Map<string, Set<string>>>(new Map());
+  const [messagesByCapsule, setMessagesByCapsule] = useState<Map<string, GuestMessage[]>>(new Map());
   const [loaded, setLoaded] = useState(false);
   const sessionId = getGameUuid();
 
@@ -78,7 +83,7 @@ export function useField(): UseFieldResult {
   };
 
   const refresh = async () => {
-    if (!sessionId) { setServerEntries([]); setLikesByCapsule(new Map()); setLoaded(true); return; }
+    if (!sessionId) { setServerEntries([]); setLikesByCapsule(new Map()); setMessagesByCapsule(new Map()); setLoaded(true); return; }
     // Do NOT blank the feed on re-fetch. `loaded` only gates the very first
     // paint ("opening the field…"); once true it stays true so that the
     // refreshes fired after every like/seal/delete swap data in place
@@ -112,7 +117,15 @@ export function useField(): UseFieldResult {
       pairs.sort((a, b) => (b.capsule.ts ?? 0) - (a.capsule.ts ?? 0));
       const limited = pairs.slice(0, MAX_DISPLAY);
 
-      const uniqueIds = Array.from(new Set(limited.map(p => p.userId)));
+      // Public guestbook notes left on capsules (best-effort, same read window).
+      const msgs = messagesByTarget(rows);
+
+      // Resolve profiles for capsule authors AND note authors in one batch.
+      const idSet = new Set(limited.map(p => p.userId));
+      for (const list of msgs.values()) {
+        for (const m of list) if (m.fromUserId) idSet.add(m.fromUserId);
+      }
+      const uniqueIds = Array.from(idSet);
       const profileEntries = await Promise.all(
         uniqueIds.map(async uid => {
           try {
@@ -139,6 +152,19 @@ export function useField(): UseFieldResult {
           };
         }),
       );
+
+      // Stamp note authors with their resolved profile too.
+      const msgsWithProfiles = new Map<string, GuestMessage[]>();
+      for (const [target, list] of msgs) {
+        msgsWithProfiles.set(
+          target,
+          list.map(m => {
+            const p = m.fromUserId ? profileMap.get(m.fromUserId) || null : null;
+            return { ...m, userName: p?.name, userAvatarUrl: p?.head_url };
+          }),
+        );
+      }
+      setMessagesByCapsule(msgsWithProfiles);
     } catch {
       // Keep whatever is already on screen. A transient fetch error here
       // (the refresh fires 1.5s after every like/seal/delete) must NOT
@@ -153,5 +179,5 @@ export function useField(): UseFieldResult {
 
   useEffect(() => { refresh(); /* eslint-disable-next-line */ }, []);
 
-  return { entries, likesByCapsule, loaded, refresh, injectLocal, removeLocal };
+  return { entries, likesByCapsule, messagesByCapsule, loaded, refresh, injectLocal, removeLocal };
 }
