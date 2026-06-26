@@ -311,7 +311,7 @@
 }
 .tsp-demo__strip {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
 }
 .tsp-demo__strip-cell {
@@ -859,7 +859,7 @@
   margin-bottom: 18px;
 }
 .tsp-altar__grid {
-  display: grid; grid-template-columns: repeat(2, 1fr);
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 22px 12px;
 }
 .tsp-altar__cell {
