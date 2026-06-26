@@ -365,6 +365,7 @@
 .tsp-seal__name--self { color: @pink; }
 .tsp-seal__ago {
   margin-left: auto;
+  flex-shrink: 0; // long-username truncation: keep time from being crushed
   font-family: 'Montserrat', sans-serif; font-weight: 500;
   font-size: 8px; letter-spacing: 0.32em;
   color: @cream-4; text-transform: uppercase;
